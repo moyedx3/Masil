@@ -162,15 +162,15 @@ export default function AddReviewModal({
       />
 
       {/* Modal */}
-      <div className="relative w-full max-w-lg bg-white rounded-t-2xl max-h-[90vh] overflow-y-auto animate-slide-up">
+      <div className="relative w-full max-w-lg bg-[#F7F4EA] rounded-t-2xl max-h-[90vh] overflow-y-auto animate-slide-up">
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-100 px-4 py-3 flex items-center justify-between rounded-t-2xl z-10">
+        <div className="sticky top-0 bg-[#F7F4EA] border-b border-[#D2DCB6] px-4 py-3 flex items-center justify-between rounded-t-2xl z-10">
           <h2 className="text-lg font-semibold text-[#1A1A1A]">Add Review</h2>
           <button
             onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
+            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#EBD9D1] transition-colors"
           >
-            <span className="text-gray-500 text-lg">✕</span>
+            <span className="text-[#778873] text-lg">✕</span>
           </button>
         </div>
 
@@ -178,7 +178,7 @@ export default function AddReviewModal({
           {/* Place info */}
           <div>
             <h3 className="font-semibold text-[#1A1A1A]">{place.name}</h3>
-            <div className="flex items-center gap-1.5 text-sm text-gray-500 mt-0.5">
+            <div className="flex items-center gap-1.5 text-sm text-[#778873] mt-0.5">
               <span>{categoryInfo.emoji}</span>
               <span>{categoryInfo.label}</span>
             </div>
@@ -189,25 +189,25 @@ export default function AddReviewModal({
 
           {/* Star Rating */}
           <div>
-            <p className="text-sm font-medium text-gray-700 mb-2">
-              Rating <span className="text-gray-400 font-normal">(optional)</span>
+            <p className="text-sm font-medium text-[#778873] mb-2">
+              Rating <span className="text-[#778873] font-normal">(optional)</span>
             </p>
             <StarRating rating={rating} onChange={setRating} />
           </div>
 
           {/* Review Text */}
           <div>
-            <p className="text-sm font-medium text-gray-700 mb-2">Your review</p>
+            <p className="text-sm font-medium text-[#778873] mb-2">Your review</p>
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value.slice(0, 500))}
               placeholder="Write your review..."
               rows={4}
-              className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-[#1A1A1A] placeholder:text-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-[#3B82F6] focus:border-transparent"
+              className="w-full border border-[#D2DCB6] rounded-xl px-4 py-3 text-sm text-[#1A1A1A] placeholder:text-[#778873] bg-white resize-none focus:outline-none focus:ring-2 focus:ring-[#A1BC98] focus:border-transparent"
             />
             <p
               className={`text-xs text-right mt-1 ${
-                content.length > 450 ? "text-orange-500" : "text-gray-400"
+                content.length > 450 ? "text-[#B87C4C]" : "text-[#778873]"
               }`}
             >
               {content.length}/500
@@ -216,8 +216,8 @@ export default function AddReviewModal({
 
           {/* Tag Selector */}
           <div>
-            <p className="text-sm font-medium text-gray-700 mb-2">
-              Tags <span className="text-gray-400 font-normal">(select all that apply)</span>
+            <p className="text-sm font-medium text-[#778873] mb-2">
+              Tags <span className="text-[#778873] font-normal">(select all that apply)</span>
             </p>
             <TagSelector selectedTags={selectedTags} onChange={setSelectedTags} />
           </div>
@@ -233,7 +233,7 @@ export default function AddReviewModal({
           <button
             onClick={handleSubmit}
             disabled={!canSubmit}
-            className="w-full py-3 px-4 rounded-full font-medium text-white bg-[#FF6B35] hover:bg-orange-600 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+            className="w-full py-3 px-4 rounded-full font-medium text-white bg-[#B87C4C] hover:opacity-90 disabled:bg-[#D2DCB6] disabled:text-[#778873] disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
           >
             {isSubmitting ? (
               <>

@@ -1,6 +1,7 @@
 "use client";
 
 import { MiniKit } from "@worldcoin/minikit-js";
+import Image from "next/image";
 import { useState, useCallback } from "react";
 import SplashScreen from "./components/SplashScreen";
 import AuthGate from "./components/AuthGate";
@@ -57,8 +58,8 @@ export default function AuthPage() {
   // Checking auth state (brief loading)
   if (appState === "checking-auth" || appState === "redirecting") {
     return (
-      <main className="min-h-screen flex flex-col items-center justify-center bg-white">
-        <div className="w-8 h-8 border-4 border-gray-200 border-t-[#3B82F6] rounded-full animate-spin" />
+      <main className="min-h-screen flex flex-col items-center justify-center bg-[#F7F4EA]">
+        <div className="w-8 h-8 border-4 border-[#D2DCB6] border-t-[#B87C4C] rounded-full animate-spin" />
       </main>
     );
   }
@@ -70,16 +71,16 @@ export default function AuthPage() {
     const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(worldAppUrl)}`;
 
     return (
-      <main className="min-h-screen flex flex-col items-center justify-center p-4 bg-white text-center">
+      <main className="min-h-screen flex flex-col items-center justify-center p-4 bg-[#F7F4EA] text-center">
         {/* Logo */}
-        <div className="mb-6 text-center">
-          <h1 className="text-4xl font-bold text-[#1A1A1A] tracking-tight">
-            Masil
-          </h1>
-          <p className="text-xl text-gray-400 font-light mt-1">마실</p>
+        <div className="mb-6 flex flex-col items-center">
+          <div className="bg-[#B87C4C] rounded-2xl px-6 py-4 mb-3">
+            <Image src="/logo.png" alt="masil." width={200} height={80} className="h-12 w-auto" priority />
+          </div>
+          <p className="text-xl text-[#778873] font-light mt-1">마실</p>
         </div>
 
-        <p className="text-gray-500 mb-6 max-w-xs">
+        <p className="text-[#778873] mb-6 max-w-xs">
           Masil is a World Mini App. Please open this link in the World App to
           continue.
         </p>
@@ -94,8 +95,8 @@ export default function AuthPage() {
           />
         </div>
 
-        <div className="p-4 bg-gray-50 rounded-xl max-w-xs">
-          <p className="text-sm text-gray-600">
+        <div className="p-4 bg-[#F1F3E0] rounded-xl max-w-xs">
+          <p className="text-sm text-[#778873]">
             Scan this QR code with World App to open Masil
           </p>
         </div>

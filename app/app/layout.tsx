@@ -5,6 +5,9 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Masil - Verified Neighborhood Reviews",
   description: "GPS-verified, World ID-authenticated reviews for foreigners in Korea",
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({

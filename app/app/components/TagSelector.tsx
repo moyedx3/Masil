@@ -60,7 +60,7 @@ export default function TagSelector({ selectedTags, onChange }: TagSelectorProps
     <div className="space-y-3">
       {TAG_CATEGORIES.map((category) => (
         <div key={category.name}>
-          <p className="text-xs font-medium text-gray-500 mb-2">{category.name}</p>
+          <p className="text-xs font-medium text-[#778873] mb-2">{category.name}</p>
           <div className="flex flex-wrap gap-2">
             {category.tags.map((tag) => {
               const isSelected = selectedTags.includes(tag.id);
@@ -73,9 +73,9 @@ export default function TagSelector({ selectedTags, onChange }: TagSelectorProps
                   className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm transition-colors ${
                     isSelected
                       ? isWarning
-                        ? "bg-orange-100 text-orange-700 border border-orange-200"
-                        : "bg-blue-100 text-blue-700 border border-blue-200"
-                      : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
+                        ? "bg-[#EBD9D1] text-[#B87C4C] border border-[#B87C4C]"
+                        : "bg-[#D2DCB6] text-[#778873] border border-[#A1BC98]"
+                      : "bg-[#F7F4EA] text-[#778873] border border-[#D2DCB6] hover:bg-[#EBD9D1]"
                   }`}
                 >
                   <span>{tag.emoji}</span>

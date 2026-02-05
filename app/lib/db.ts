@@ -48,10 +48,10 @@ export interface HelpfulnessVote {
 
 // Trust score tiers
 export const TRUST_TIERS = {
-  trusted: { min: 80, color: "#22C55E", label: "Trusted Local" },
-  reliable: { min: 60, color: "#3B82F6", label: "Reliable" },
-  new: { min: 40, color: "#9CA3AF", label: "New User" },
-  low: { min: 20, color: "#F97316", label: "Low Trust" },
+  trusted: { min: 80, color: "#A1BC98", label: "Trusted Local" },
+  reliable: { min: 60, color: "#A8BBA3", label: "Reliable" },
+  new: { min: 40, color: "#D2DCB6", label: "New User" },
+  low: { min: 20, color: "#B87C4C", label: "Low Trust" },
   untrusted: { min: 0, color: "#EF4444", label: "Untrusted" },
 } as const;
 
