@@ -53,6 +53,11 @@ export default function AddReviewModal({
 
         if (isWithinRange(lat, lng, place.latitude, place.longitude)) {
           setGpsState("verified");
+          // Stop polling once verified
+          if (gpsIntervalRef.current) {
+            clearInterval(gpsIntervalRef.current);
+            gpsIntervalRef.current = null;
+          }
         } else {
           setGpsState("too-far");
         }
@@ -60,6 +65,11 @@ export default function AddReviewModal({
       (error) => {
         if (error.code === error.PERMISSION_DENIED) {
           setGpsState("denied");
+          // Stop polling if permission denied
+          if (gpsIntervalRef.current) {
+            clearInterval(gpsIntervalRef.current);
+            gpsIntervalRef.current = null;
+          }
         } else {
           setGpsState("error");
         }

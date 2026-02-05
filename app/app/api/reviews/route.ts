@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createReview, getPlace } from "@/lib/db";
-import { haversineDistance, isWithinRange } from "@/lib/geo";
+import { createReview, getPlace, getUser } from "@/lib/db";
+import { haversineDistance } from "@/lib/geo";
 
 interface CreateReviewBody {
   place_id: string;
@@ -18,6 +18,15 @@ export async function POST(req: NextRequest) {
     if (!auth?.value) {
       return NextResponse.json(
         { success: false, error: "Authentication required" },
+        { status: 401 }
+      );
+    }
+
+    // Verify user exists in database
+    const user = await getUser(auth.value);
+    if (!user) {
+      return NextResponse.json(
+        { success: false, error: "User not found" },
         { status: 401 }
       );
     }
@@ -63,7 +72,7 @@ export async function POST(req: NextRequest) {
       haversineDistance(user_lat, user_lng, place.latitude, place.longitude)
     );
 
-    if (!isWithinRange(user_lat, user_lng, place.latitude, place.longitude)) {
+    if (distance > 50) {
       return NextResponse.json(
         {
           success: false,
