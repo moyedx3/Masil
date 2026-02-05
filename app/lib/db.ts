@@ -124,6 +124,54 @@ export async function getPlaces(): Promise<Place[]> {
   return data as Place[];
 }
 
+// Get a place by ID
+export async function getPlace(placeId: string): Promise<Place | null> {
+  const supabase = createServerClient();
+
+  const { data, error } = await supabase
+    .from("places")
+    .select("*")
+    .eq("id", placeId)
+    .single();
+
+  if (error || !data) {
+    return null;
+  }
+
+  return data as Place;
+}
+
+// Create a new review
+export async function createReview(review: {
+  place_id: string;
+  user_nullifier: string;
+  content: string;
+  rating?: number;
+  tags?: string[];
+}): Promise<Review | null> {
+  const supabase = createServerClient();
+
+  const { data, error } = await supabase
+    .from("reviews")
+    .insert({
+      place_id: review.place_id,
+      user_nullifier: review.user_nullifier,
+      content: review.content,
+      rating: review.rating || null,
+      tags: review.tags || [],
+      source: "user",
+    })
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Error creating review:", error);
+    return null;
+  }
+
+  return data as Review;
+}
+
 // Get reviews for a place
 export async function getReviewsByPlace(placeId: string): Promise<Review[]> {
   const supabase = createServerClient();

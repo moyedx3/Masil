@@ -6,6 +6,7 @@ import dynamic from "next/dynamic";
 import { Place, Review } from "@/lib/db";
 import BottomSheet from "@/app/components/BottomSheet";
 import PlaceDetail from "@/app/components/PlaceDetail";
+import AddReviewModal from "@/app/components/AddReviewModal";
 
 // Dynamically import Map to avoid SSR issues with Mapbox
 const Map = dynamic(() => import("@/app/components/Map"), {
@@ -38,6 +39,10 @@ export default function HomePage() {
   const [selectedPlace, setSelectedPlace] = useState<PlaceWithReviews | null>(null);
   const [isLoadingPlace, setIsLoadingPlace] = useState(false);
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+
+  // Add review modal state
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [successToast, setSuccessToast] = useState(false);
 
   useEffect(() => {
     fetchPlaces();
@@ -100,6 +105,23 @@ export default function HomePage() {
     setSelectedPlace(null);
   }, []);
 
+  // Open add review modal
+  const handleAddReview = useCallback(() => {
+    setIsReviewModalOpen(true);
+  }, []);
+
+  // Handle successful review post
+  const handleReviewSuccess = useCallback(() => {
+    setIsReviewModalOpen(false);
+    setSuccessToast(true);
+    setTimeout(() => setSuccessToast(false), 3000);
+
+    // Refresh reviews for the current place
+    if (selectedPlaceId) {
+      handlePlaceSelect(selectedPlaceId);
+    }
+  }, [selectedPlaceId, handlePlaceSelect]);
+
   // Error state
   if (status === "error") {
     return (
@@ -124,6 +146,16 @@ export default function HomePage() {
 
   return (
     <main className="relative min-h-screen">
+      {/* Success Toast */}
+      {successToast && (
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[60] animate-fade-in">
+          <div className="bg-[#22C55E] text-white px-6 py-3 rounded-full shadow-lg text-sm font-medium flex items-center gap-2">
+            <span>✓</span>
+            <span>Review posted!</span>
+          </div>
+        </div>
+      )}
+
       {/* Map takes full screen */}
       <div className="absolute inset-0">
         <Map places={places} onPlaceSelect={handlePlaceSelect} />
@@ -180,6 +212,7 @@ export default function HomePage() {
           <PlaceDetail
             place={selectedPlace}
             reviews={selectedPlace.reviews}
+            onAddReview={handleAddReview}
           />
         ) : (
           <div className="text-center py-8">
@@ -194,6 +227,16 @@ export default function HomePage() {
           </div>
         )}
       </BottomSheet>
+
+      {/* Add Review Modal */}
+      {selectedPlace && (
+        <AddReviewModal
+          place={selectedPlace}
+          isOpen={isReviewModalOpen}
+          onClose={() => setIsReviewModalOpen(false)}
+          onSuccess={handleReviewSuccess}
+        />
+      )}
     </main>
   );
 }
