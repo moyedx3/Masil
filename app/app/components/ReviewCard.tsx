@@ -65,7 +65,7 @@ function StarRating({ rating }: { rating: number }) {
       {[1, 2, 3, 4, 5].map((star) => (
         <span
           key={star}
-          className={star <= rating ? "text-yellow-400" : "text-gray-300"}
+          className={star <= rating ? "text-[#B87C4C]" : "text-[#D2DCB6]"}
         >
           ★
         </span>
@@ -91,19 +91,19 @@ export default function ReviewCard({
     : review.content.slice(0, contentLimit) + "...";
 
   return (
-    <div className="bg-gray-50 rounded-xl p-4 mb-3">
+    <div className="bg-[#F1F3E0] rounded-xl p-4 mb-3">
       {/* Header */}
       <div className="flex items-start justify-between mb-2">
         <div className="flex items-center gap-2">
           {/* Google icon for imported reviews */}
           {isImported && (
-            <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center border border-gray-200">
-              <span className="text-xs font-bold text-gray-600">G</span>
+            <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center border border-[#D2DCB6]">
+              <span className="text-xs font-bold text-[#778873]">G</span>
             </div>
           )}
 
           {/* Author name */}
-          <span className="font-medium text-gray-800">
+          <span className="font-medium text-[#1A1A1A]">
             {isImported
               ? anonymizeAuthor(review.original_author)
               : "Anonymous User"}
@@ -114,14 +114,14 @@ export default function ReviewCard({
         </div>
 
         {/* Time */}
-        <span className="text-xs text-gray-500">
+        <span className="text-xs text-[#778873]">
           {formatRelativeTime(review.created_at)}
         </span>
       </div>
 
       {/* Imported badge */}
       {isImported && (
-        <div className="inline-flex items-center gap-1 bg-gray-200 text-gray-600 text-xs px-2 py-1 rounded-full mb-2">
+        <div className="inline-flex items-center gap-1 bg-[#EBD9D1] text-[#778873] text-xs px-2 py-1 rounded-full mb-2">
           <span>📥</span>
           <span>Imported via Google Maps</span>
         </div>
@@ -135,12 +135,12 @@ export default function ReviewCard({
       )}
 
       {/* Content */}
-      <p className="text-gray-700 text-sm leading-relaxed mb-3">
+      <p className="text-[#1A1A1A] text-sm leading-relaxed mb-3">
         {displayContent}
         {isLongContent && (
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="text-[#FF6B35] ml-1 font-medium"
+            className="text-[#B87C4C] ml-1 font-medium"
           >
             {isExpanded ? "Show less" : "Read more"}
           </button>
@@ -153,7 +153,7 @@ export default function ReviewCard({
           {review.tags.map((tag, index) => (
             <span
               key={index}
-              className="bg-orange-100 text-orange-700 text-xs px-2 py-0.5 rounded-full"
+              className="bg-[#D2DCB6] text-[#778873] text-xs px-2 py-0.5 rounded-full"
             >
               {tag}
             </span>

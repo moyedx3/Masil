@@ -38,23 +38,23 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
 
   return (
     <div
-      className={`fixed inset-0 z-50 flex flex-col items-center justify-center bg-white transition-opacity duration-300 ${
+      className={`fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#F7F4EA] transition-opacity duration-300 ${
         state === "fading" ? "opacity-0" : "opacity-100"
       }`}
     >
       {/* Logo */}
-      <div className="mb-6 text-center">
-        <h1 className="text-5xl font-bold text-[#1A1A1A] tracking-tight">
-          Masil
-        </h1>
-        <p className="text-2xl text-gray-400 font-light mt-1">마실</p>
+      <div className="mb-6 flex flex-col items-center">
+        <div className="bg-[#B87C4C] rounded-2xl px-6 py-4 mb-3">
+          <img src="/logo.png" alt="masil." className="h-12" />
+        </div>
+        <p className="text-xl text-[#778873] font-light mt-1">마실</p>
       </div>
 
       {/* Tagline */}
-      <p className="text-gray-500 text-lg mb-12">Reviews you can trust</p>
+      <p className="text-[#778873] text-lg mb-12">Reviews you can trust</p>
 
       {/* Loading Spinner */}
-      <div className="w-8 h-8 border-4 border-gray-200 border-t-[#FF6B35] rounded-full animate-spin" />
+      <div className="w-8 h-8 border-4 border-[#D2DCB6] border-t-[#B87C4C] rounded-full animate-spin" />
     </div>
   );
 }

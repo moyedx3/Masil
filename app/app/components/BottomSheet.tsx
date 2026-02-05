@@ -167,7 +167,7 @@ export default function BottomSheet({
       {/* Bottom Sheet */}
       <div
         ref={sheetRef}
-        className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-3xl shadow-[0_-4px_20px_rgba(0,0,0,0.15)]"
+        className="fixed bottom-0 left-0 right-0 z-50 bg-[#F7F4EA] rounded-t-3xl shadow-[0_-4px_20px_rgba(0,0,0,0.15)]"
         style={{
           height: `${height}vh`,
           transition: isDragging ? "none" : "height 0.3s ease-out",
@@ -182,7 +182,7 @@ export default function BottomSheet({
           onTouchEnd={handleTouchEnd}
           onMouseDown={handleMouseDown}
         >
-          <div className="w-10 h-1 bg-gray-300 rounded-full" />
+          <div className="w-10 h-1 bg-[#D2DCB6] rounded-full" />
         </div>
 
         {/* Content */}

@@ -54,14 +54,14 @@ export default function ProfilePage() {
 
   if (isLoading) {
     return (
-      <main className="min-h-screen bg-white p-4">
+      <main className="min-h-screen bg-[#F7F4EA] p-4">
         <div className="animate-pulse max-w-md mx-auto pt-8">
-          <div className="h-20 w-20 bg-gray-200 rounded-full mx-auto mb-4" />
-          <div className="h-6 bg-gray-200 rounded w-1/2 mx-auto mb-2" />
-          <div className="h-4 bg-gray-200 rounded w-1/3 mx-auto mb-8" />
+          <div className="h-20 w-20 bg-[#D2DCB6] rounded-full mx-auto mb-4" />
+          <div className="h-6 bg-[#D2DCB6] rounded w-1/2 mx-auto mb-2" />
+          <div className="h-4 bg-[#D2DCB6] rounded w-1/3 mx-auto mb-8" />
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-24 bg-gray-200 rounded-xl" />
+              <div key={i} className="h-24 bg-[#D2DCB6] rounded-xl" />
             ))}
           </div>
         </div>
@@ -71,12 +71,12 @@ export default function ProfilePage() {
 
   if (error || !profile) {
     return (
-      <main className="min-h-screen bg-white flex flex-col items-center justify-center p-4">
+      <main className="min-h-screen bg-[#F7F4EA] flex flex-col items-center justify-center p-4">
         <div className="text-4xl mb-3">😕</div>
-        <p className="text-gray-500 mb-4">{error || "Profile not found"}</p>
+        <p className="text-[#778873] mb-4">{error || "Profile not found"}</p>
         <button
           onClick={() => router.push("/home")}
-          className="text-[#FF6B35] font-medium"
+          className="text-[#B87C4C] font-medium"
         >
           Back to Map
         </button>
@@ -87,12 +87,12 @@ export default function ProfilePage() {
   const tier = getTrustTier(profile.user.trust_score);
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-[#F7F4EA]">
       {/* Header */}
-      <header className="p-4 flex items-center gap-3 border-b border-gray-100">
+      <header className="p-4 flex items-center gap-3 border-b border-[#D2DCB6]">
         <button
           onClick={() => router.push("/home")}
-          className="text-gray-600 text-lg"
+          className="text-[#778873] text-lg"
         >
           ←
         </button>
@@ -112,39 +112,39 @@ export default function ProfilePage() {
             Anonymous User
           </h2>
           <TrustBadge score={profile.user.trust_score} size="md" />
-          <p className="text-xs text-gray-400 mt-2">
+          <p className="text-xs text-[#778873] mt-2">
             Joined {new Date(profile.user.created_at).toLocaleDateString()}
           </p>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-3 gap-3 mb-6">
-          <div className="bg-gray-50 rounded-xl p-3 text-center">
+          <div className="bg-[#F1F3E0] rounded-xl p-3 text-center">
             <div className="text-2xl font-bold text-[#1A1A1A]">
               {profile.user.trust_score}
             </div>
-            <div className="text-xs text-gray-500">Trust Score</div>
+            <div className="text-xs text-[#778873]">Trust Score</div>
           </div>
-          <div className="bg-gray-50 rounded-xl p-3 text-center">
+          <div className="bg-[#F1F3E0] rounded-xl p-3 text-center">
             <div className="text-2xl font-bold text-[#1A1A1A]">
               {profile.stats.review_count}
             </div>
-            <div className="text-xs text-gray-500">Reviews</div>
+            <div className="text-xs text-[#778873]">Reviews</div>
           </div>
-          <div className="bg-gray-50 rounded-xl p-3 text-center">
+          <div className="bg-[#F1F3E0] rounded-xl p-3 text-center">
             <div className="text-2xl font-bold text-[#1A1A1A]">
               {profile.stats.helpful_votes_received}
             </div>
-            <div className="text-xs text-gray-500">Helpful</div>
+            <div className="text-xs text-[#778873]">Helpful</div>
           </div>
         </div>
 
         {/* Trust Score Explanation */}
-        <div className="bg-gray-50 rounded-xl p-4 mb-6">
+        <div className="bg-[#F1F3E0] rounded-xl p-4 mb-6">
           <h3 className="text-sm font-semibold text-[#1A1A1A] mb-2">
             How Trust Score Works
           </h3>
-          <div className="space-y-1 text-xs text-gray-600">
+          <div className="space-y-1 text-xs text-[#778873]">
             <p>+2 points when someone finds your review helpful</p>
             <p>-3 points when someone marks your review as not helpful</p>
             <p>Score range: 0-100 (starting at 50)</p>
@@ -160,10 +160,10 @@ export default function ProfilePage() {
           {profile.reviews.length === 0 ? (
             <div className="text-center py-8">
               <div className="text-4xl mb-3">📝</div>
-              <p className="text-gray-500 mb-2">No reviews yet</p>
+              <p className="text-[#778873] mb-2">No reviews yet</p>
               <button
                 onClick={() => router.push("/home")}
-                className="text-[#FF6B35] font-medium text-sm"
+                className="text-[#B87C4C] font-medium text-sm"
               >
                 Go explore places
               </button>
@@ -171,7 +171,7 @@ export default function ProfilePage() {
           ) : (
             <div className="space-y-3">
               {profile.reviews.map((review) => (
-                <div key={review.id} className="bg-gray-50 rounded-xl p-4">
+                <div key={review.id} className="bg-[#F1F3E0] rounded-xl p-4">
                   <div className="flex items-start justify-between mb-1">
                     <span className="text-sm font-medium text-[#1A1A1A]">
                       {review.place_name}
@@ -181,7 +181,7 @@ export default function ProfilePage() {
                         {[1, 2, 3, 4, 5].map((star) => (
                           <span
                             key={star}
-                            className={`text-xs ${star <= review.rating! ? "text-yellow-400" : "text-gray-300"}`}
+                            className={`text-xs ${star <= review.rating! ? "text-[#B87C4C]" : "text-[#D2DCB6]"}`}
                           >
                             ★
                           </span>
@@ -189,10 +189,10 @@ export default function ProfilePage() {
                       </div>
                     )}
                   </div>
-                  <p className="text-sm text-gray-600 mb-2 line-clamp-2">
+                  <p className="text-sm text-[#778873] mb-2 line-clamp-2">
                     {review.content}
                   </p>
-                  <div className="flex items-center gap-3 text-xs text-gray-400">
+                  <div className="flex items-center gap-3 text-xs text-[#778873]">
                     <span>
                       {new Date(review.created_at).toLocaleDateString()}
                     </span>

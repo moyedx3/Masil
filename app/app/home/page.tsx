@@ -12,10 +12,10 @@ import AddReviewModal from "@/app/components/AddReviewModal";
 const Map = dynamic(() => import("@/app/components/Map"), {
   ssr: false,
   loading: () => (
-    <div className="w-full h-screen flex items-center justify-center bg-gray-100">
+    <div className="w-full h-screen flex items-center justify-center bg-[#F7F4EA]">
       <div className="text-center">
-        <div className="w-8 h-8 border-4 border-gray-200 border-t-[#FF6B35] rounded-full animate-spin mx-auto mb-4" />
-        <p className="text-gray-500">Loading map...</p>
+        <div className="w-8 h-8 border-4 border-[#D2DCB6] border-t-[#B87C4C] rounded-full animate-spin mx-auto mb-4" />
+        <p className="text-[#778873]">Loading map...</p>
       </div>
     </div>
   ),
@@ -127,18 +127,18 @@ export default function HomePage() {
   // Error state
   if (status === "error") {
     return (
-      <main className="min-h-screen bg-white flex flex-col items-center justify-center p-4">
+      <main className="min-h-screen bg-[#F7F4EA] flex flex-col items-center justify-center p-4">
         <div className="text-6xl mb-4">😕</div>
         <h2 className="text-xl font-semibold text-[#1A1A1A] mb-2">
           Something went wrong
         </h2>
-        <p className="text-gray-500 mb-4">{errorMsg}</p>
+        <p className="text-[#778873] mb-4">{errorMsg}</p>
         <button
           onClick={() => {
             setStatus("loading");
             fetchPlaces();
           }}
-          className="bg-[#1A1A1A] text-white px-6 py-3 rounded-full"
+          className="bg-[#B87C4C] text-white px-6 py-3 rounded-full transition-colors hover:opacity-90"
         >
           Try Again
         </button>
@@ -151,7 +151,7 @@ export default function HomePage() {
       {/* Success Toast */}
       {successToast && (
         <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[60] animate-fade-in">
-          <div className="bg-[#22C55E] text-white px-6 py-3 rounded-full shadow-lg text-sm font-medium flex items-center gap-2">
+          <div className="bg-[#A8BBA3] text-white px-6 py-3 rounded-full shadow-lg text-sm font-medium flex items-center gap-2">
             <span>✓</span>
             <span>Review posted!</span>
           </div>
@@ -166,24 +166,25 @@ export default function HomePage() {
       {/* Header overlay */}
       <header className="absolute top-0 left-0 right-0 z-10 p-4">
         <div className="flex justify-between items-center">
-          <div className="bg-white rounded-full px-4 py-2 shadow-lg flex items-center gap-2">
-            <span className="text-lg font-bold text-[#1A1A1A]">Masil</span>
-            <span className="text-sm text-gray-500">마실</span>
-            <div className="w-5 h-5 bg-[#22C55E] rounded-full flex items-center justify-center ml-1">
+          <div className="bg-[#F7F4EA] rounded-full px-3 py-2 shadow-lg flex items-center gap-2">
+            <div className="bg-[#B87C4C] rounded-lg px-2 py-1">
+              <img src="/logo.png" alt="masil." className="h-5" />
+            </div>
+            <div className="w-5 h-5 bg-[#A8BBA3] rounded-full flex items-center justify-center ml-1">
               <span className="text-xs text-white">✓</span>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <button
               onClick={() => router.push("/profile")}
-              className="bg-white rounded-full w-10 h-10 shadow-lg flex items-center justify-center text-lg"
+              className="bg-[#F7F4EA] rounded-full w-10 h-10 shadow-lg flex items-center justify-center text-lg transition-colors hover:bg-[#EBD9D1]"
             >
               🧑
             </button>
             <button
               onClick={handleSignOut}
               disabled={isSigningOut}
-              className="bg-white rounded-full px-4 py-2 shadow-lg text-gray-600 text-sm"
+              className="bg-[#F7F4EA] rounded-full px-4 py-2 shadow-lg text-[#778873] text-sm transition-colors hover:bg-[#EBD9D1]"
             >
               {isSigningOut ? "..." : "Sign out"}
             </button>
@@ -194,7 +195,7 @@ export default function HomePage() {
       {/* Places count indicator */}
       {status === "ready" && !isBottomSheetOpen && (
         <div className="absolute bottom-6 left-4 z-10">
-          <div className="bg-white rounded-full px-4 py-2 shadow-lg text-sm text-gray-600">
+          <div className="bg-[#F7F4EA] rounded-full px-4 py-2 shadow-lg text-sm text-[#778873]">
             {places.length} places
           </div>
         </div>
@@ -229,10 +230,10 @@ export default function HomePage() {
         ) : (
           <div className="text-center py-8">
             <div className="text-4xl mb-3">😕</div>
-            <p className="text-gray-500">Failed to load place details</p>
+            <p className="text-[#778873]">Failed to load place details</p>
             <button
               onClick={() => selectedPlaceId && handlePlaceSelect(selectedPlaceId)}
-              className="mt-4 text-[#FF6B35] font-medium"
+              className="mt-4 text-[#B87C4C] font-medium"
             >
               Try again
             </button>

@@ -1,25 +1,25 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #1a1a1a;
-  --accent: #ff6b35;
-  --success: #22c55e;
+  --background: #F7F4EA;
+  --foreground: #1A1A1A;
+  --accent: #B87C4C;
+  --success: #A8BBA3;
 
-  /* Primary gradient */
+  /* Primary gradient (keep for World ID) */
   --color-primary-gradient: linear-gradient(135deg, #3B82F6, #8B5CF6);
 
   /* Secondary */
-  --color-secondary-bg: #ffffff;
-  --color-secondary-border: #e5e7eb;
-  --color-secondary-text: #374151;
+  --color-secondary-bg: #F1F3E0;
+  --color-secondary-border: #D2DCB6;
+  --color-secondary-text: #778873;
 
   /* Trust score */
-  --color-trust-high: #22c55e;
-  --color-trust-mid: #3b82f6;
-  --color-trust-new: #9ca3af;
-  --color-trust-low: #f97316;
-  --color-trust-bad: #ef4444;
+  --color-trust-high: #A1BC98;
+  --color-trust-mid: #A8BBA3;
+  --color-trust-new: #D2DCB6;
+  --color-trust-low: #B87C4C;
+  --color-trust-bad: #EF4444;
 }
 
 body {
@@ -56,4 +56,45 @@ body {
 
 .animate-slide-up {
   animation: slide-up 0.3s ease-out;
+}
+
+/* Scale-in animation for bottom sheet content */
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-scale-in {
+  animation: scale-in 0.2s ease-out;
+}
+
+/* Pulse animation for GPS checking state */
+@keyframes pulse-soft {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 2s ease-in-out infinite;
+}
+
+/* Smooth color transitions on interactive elements */
+button,
+a {
+  transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+}
+
+/* iOS safe area padding for bottom elements */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }

@@ -8,9 +8,18 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Masil brand colors from CLAUDE.md
-        accent: "#FF6B35",
-        success: "#22C55E",
+        brand: {
+          cream: "#F7F4EA",
+          blush: "#EBD9D1",
+          brown: "#B87C4C",
+          sage: "#A8BBA3",
+          "sage-light": "#F1F3E0",
+          "sage-soft": "#D2DCB6",
+          "sage-mid": "#A1BC98",
+          "sage-deep": "#778873",
+        },
+        accent: "#B87C4C",
+        success: "#A8BBA3",
       },
     },
   },

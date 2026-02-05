@@ -21,13 +21,17 @@ export default function StarRating({ rating, onChange }: StarRatingProps) {
           className="p-1 transition-transform active:scale-90"
           aria-label={`${star} star${star !== 1 ? "s" : ""}`}
         >
-          <span className="text-2xl">
+          <span
+            className={`text-2xl ${
+              star <= rating ? "text-[#B87C4C]" : "text-[#D2DCB6]"
+            }`}
+          >
             {star <= rating ? "★" : "☆"}
           </span>
         </button>
       ))}
       {rating > 0 && (
-        <span className="text-sm text-gray-500 ml-2">{rating}/5</span>
+        <span className="text-sm text-[#778873] ml-2">{rating}/5</span>
       )}
     </div>
   );

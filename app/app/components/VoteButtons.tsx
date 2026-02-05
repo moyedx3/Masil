@@ -71,10 +71,10 @@ export default function VoteButtons({
 
   if (isOwnReview) {
     return (
-      <div className="flex items-center gap-4 pt-2 border-t border-gray-200">
-        <span className="text-xs text-gray-400">Your review</span>
+      <div className="flex items-center gap-4 pt-2 border-t border-[#D2DCB6]">
+        <span className="text-xs text-[#778873]">Your review</span>
         {helpfulCount > 0 && (
-          <span className="text-xs text-gray-500">
+          <span className="text-xs text-[#778873]">
             {helpfulCount} found helpful
           </span>
         )}
@@ -83,14 +83,14 @@ export default function VoteButtons({
   }
 
   return (
-    <div className="flex items-center gap-4 pt-2 border-t border-gray-200">
+    <div className="flex items-center gap-4 pt-2 border-t border-[#D2DCB6]">
       <button
         onClick={() => handleVote(true)}
         disabled={isSubmitting}
         className={`flex items-center gap-1.5 transition-colors ${
           userVote === "helpful"
-            ? "text-[#22C55E]"
-            : "text-gray-500 hover:text-[#22C55E]"
+            ? "text-[#A1BC98]"
+            : "text-[#778873] hover:text-[#A1BC98]"
         }`}
       >
         <span>👍</span>
@@ -107,7 +107,7 @@ export default function VoteButtons({
         className={`flex items-center gap-1.5 transition-colors ${
           userVote === "not_helpful"
             ? "text-red-500"
-            : "text-gray-500 hover:text-red-500"
+            : "text-[#778873] hover:text-red-500"
         }`}
       >
         <span>👎</span>

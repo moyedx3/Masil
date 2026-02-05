@@ -39,24 +39,24 @@ export default function FAQ() {
 
   return (
     <div className="w-full max-w-sm">
-      <h3 className="text-sm font-medium text-gray-500 mb-3 text-center">
+      <h3 className="text-sm font-medium text-[#778873] mb-3 text-center">
         Frequently Asked Questions
       </h3>
-      <div className="border border-gray-200 rounded-xl overflow-hidden">
+      <div className="border border-[#D2DCB6] rounded-xl overflow-hidden">
         {FAQ_ITEMS.map((item, index) => (
           <div
             key={index}
-            className={`${index !== 0 ? "border-t border-gray-200" : ""}`}
+            className={`${index !== 0 ? "border-t border-[#D2DCB6]" : ""}`}
           >
             <button
               onClick={() => toggleItem(index)}
-              className="w-full px-4 py-3 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
+              className="w-full px-4 py-3 flex items-center justify-between text-left hover:bg-[#F1F3E0] transition-colors"
             >
               <span className="text-sm font-medium text-[#1A1A1A]">
                 {item.question}
               </span>
               <span
-                className={`text-gray-400 transition-transform duration-200 ${
+                className={`text-[#778873] transition-transform duration-200 ${
                   expandedIndex === index ? "rotate-180" : ""
                 }`}
               >
@@ -82,7 +82,7 @@ export default function FAQ() {
                 expandedIndex === index ? "max-h-40" : "max-h-0"
               }`}
             >
-              <p className="px-4 pb-3 text-sm text-gray-600 leading-relaxed">
+              <p className="px-4 pb-3 text-sm text-[#778873] leading-relaxed">
                 {item.answer}
               </p>
             </div>
