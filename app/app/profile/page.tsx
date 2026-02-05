@@ -176,7 +176,7 @@ export default function ProfilePage() {
                     <span className="text-sm font-medium text-[#1A1A1A]">
                       {review.place_name}
                     </span>
-                    {review.rating && (
+                    {review.rating != null && review.rating > 0 && (
                       <div className="flex gap-0.5">
                         {[1, 2, 3, 4, 5].map((star) => (
                           <span

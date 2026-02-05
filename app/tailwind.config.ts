@@ -18,8 +18,6 @@ export default {
           "sage-mid": "#A1BC98",
           "sage-deep": "#778873",
         },
-        accent: "#B87C4C",
-        success: "#A8BBA3",
       },
     },
   },

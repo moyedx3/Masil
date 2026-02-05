@@ -1,6 +1,7 @@
 "use client";
 
 import { MiniKit } from "@worldcoin/minikit-js";
+import Image from "next/image";
 import { useState, useCallback } from "react";
 import SplashScreen from "./components/SplashScreen";
 import AuthGate from "./components/AuthGate";
@@ -74,7 +75,7 @@ export default function AuthPage() {
         {/* Logo */}
         <div className="mb-6 flex flex-col items-center">
           <div className="bg-[#B87C4C] rounded-2xl px-6 py-4 mb-3">
-            <img src="/logo.png" alt="masil." className="h-12" />
+            <Image src="/logo.png" alt="masil." width={200} height={80} className="h-12 w-auto" priority />
           </div>
           <p className="text-xl text-[#778873] font-light mt-1">마실</p>
         </div>

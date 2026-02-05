@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { MiniKit, VerificationLevel } from "@worldcoin/minikit-js";
 import FAQ from "./FAQ";
 
@@ -94,7 +95,7 @@ export default function AuthGate({ onVerifySuccess }: AuthGateProps) {
       {/* Header with Logo */}
       <div className="mb-8 text-center">
         <div className="bg-[#B87C4C] rounded-2xl px-5 py-3 inline-block mb-4">
-          <img src="/logo.png" alt="masil." className="h-10" />
+          <Image src="/logo.png" alt="masil." width={200} height={80} className="h-10 w-auto" />
         </div>
         <h1 className="text-3xl font-bold text-[#1A1A1A] mb-2">
           Welcome to Masil

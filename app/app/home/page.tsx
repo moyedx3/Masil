@@ -3,10 +3,26 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import { Place, Review, HelpfulnessVote } from "@/lib/db";
 import BottomSheet from "@/app/components/BottomSheet";
 import PlaceDetail from "@/app/components/PlaceDetail";
-import AddReviewModal from "@/app/components/AddReviewModal";
+const AddReviewModal = dynamic(() => import("@/app/components/AddReviewModal"), {
+  ssr: false,
+});
+
+const LOADING_PLACE: Place = {
+  id: "",
+  name: "Loading...",
+  name_korean: null,
+  latitude: 0,
+  longitude: 0,
+  category: "other",
+  google_place_id: null,
+  address: null,
+  created_at: "",
+};
+const EMPTY_REVIEWS: Review[] = [];
 
 // Dynamically import Map to avoid SSR issues with Mapbox
 const Map = dynamic(() => import("@/app/components/Map"), {
@@ -168,7 +184,7 @@ export default function HomePage() {
         <div className="flex justify-between items-center">
           <div className="bg-[#F7F4EA] rounded-full px-3 py-2 shadow-lg flex items-center gap-2">
             <div className="bg-[#B87C4C] rounded-lg px-2 py-1">
-              <img src="/logo.png" alt="masil." className="h-5" />
+              <Image src="/logo.png" alt="masil." width={100} height={40} className="h-5 w-auto" />
             </div>
             <div className="w-5 h-5 bg-[#A8BBA3] rounded-full flex items-center justify-center ml-1">
               <span className="text-xs text-white">✓</span>
@@ -205,18 +221,8 @@ export default function HomePage() {
       <BottomSheet isOpen={isBottomSheetOpen} onClose={handleBottomSheetClose}>
         {isLoadingPlace ? (
           <PlaceDetail
-            place={{
-              id: "",
-              name: "Loading...",
-              name_korean: null,
-              latitude: 0,
-              longitude: 0,
-              category: "other",
-              google_place_id: null,
-              address: null,
-              created_at: "",
-            }}
-            reviews={[]}
+            place={LOADING_PLACE}
+            reviews={EMPTY_REVIEWS}
             isLoading={true}
           />
         ) : selectedPlace ? (

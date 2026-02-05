@@ -9,7 +9,7 @@ export default function GPSStatus({ status, distance }: GPSStatusProps) {
   if (status === "checking") {
     return (
       <div className="flex items-center gap-3 p-3 bg-[#F1F3E0] rounded-xl border border-[#D2DCB6]">
-        <div className="w-5 h-5 border-2 border-[#A1BC98] border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-[#A1BC98] border-t-transparent rounded-full animate-spin flex-shrink-0" />
         <div>
           <p className="text-sm font-medium text-[#778873]">Checking location...</p>
           <p className="text-xs text-[#778873]">Using GPS to verify your position</p>

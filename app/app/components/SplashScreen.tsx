@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 interface SplashScreenProps {
   onComplete: () => void;
@@ -45,7 +46,7 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
       {/* Logo */}
       <div className="mb-6 flex flex-col items-center">
         <div className="bg-[#B87C4C] rounded-2xl px-6 py-4 mb-3">
-          <img src="/logo.png" alt="masil." className="h-12" />
+          <Image src="/logo.png" alt="masil." width={200} height={80} className="h-12 w-auto" priority />
         </div>
         <p className="text-xl text-[#778873] font-light mt-1">마실</p>
       </div>

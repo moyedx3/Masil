@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { Place, Review, HelpfulnessVote, CATEGORIES, CategoryKey } from "@/lib/db";
 import ReviewCard from "./ReviewCard";
 
@@ -23,9 +24,9 @@ export default function PlaceDetail({
   const category = place.category as CategoryKey;
   const categoryInfo = CATEGORIES[category] || CATEGORIES.other;
 
-  const voteMap = new Map(
+  const voteMap = useMemo(() => new Map(
     userVotes.map((v) => [v.review_id, v.is_helpful ? "helpful" as const : "not_helpful" as const])
-  );
+  ), [userVotes]);
 
   // Open Google Maps directions
   const handleGetDirections = () => {

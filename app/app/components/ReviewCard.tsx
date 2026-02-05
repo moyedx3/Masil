@@ -128,7 +128,7 @@ export default function ReviewCard({
       )}
 
       {/* Rating */}
-      {review.rating && (
+      {review.rating != null && review.rating > 0 && (
         <div className="mb-2">
           <StarRating rating={review.rating} />
         </div>
