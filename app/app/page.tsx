@@ -57,8 +57,8 @@ export default function AuthPage() {
   // Checking auth state (brief loading)
   if (appState === "checking-auth" || appState === "redirecting") {
     return (
-      <main className="min-h-screen flex flex-col items-center justify-center p-4 bg-white">
-        <div className="w-8 h-8 border-4 border-gray-200 border-t-[#FF6B35] rounded-full animate-spin" />
+      <main className="min-h-screen flex flex-col items-center justify-center bg-white">
+        <div className="w-8 h-8 border-4 border-gray-200 border-t-[#3B82F6] rounded-full animate-spin" />
       </main>
     );
   }
@@ -80,10 +80,10 @@ export default function AuthPage() {
         </div>
 
         <p className="text-gray-500 mb-6 max-w-xs">
-          Masil is a World Mini App. Please open this link in the World App to continue.
+          Masil is a World Mini App. Please open this link in the World App to
+          continue.
         </p>
 
-        {/* QR Code */}
         <div className="mb-6 p-4 bg-white rounded-xl shadow-lg">
           <img
             src={qrCodeUrl}
@@ -94,7 +94,7 @@ export default function AuthPage() {
           />
         </div>
 
-        <div className="p-4 bg-gray-100 rounded-lg max-w-xs">
+        <div className="p-4 bg-gray-50 rounded-xl max-w-xs">
           <p className="text-sm text-gray-600">
             Scan this QR code with World App to open Masil
           </p>
