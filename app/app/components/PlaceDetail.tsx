@@ -7,12 +7,14 @@ interface PlaceDetailProps {
   place: Place;
   reviews: Review[];
   isLoading?: boolean;
+  onAddReview?: () => void;
 }
 
 export default function PlaceDetail({
   place,
   reviews,
   isLoading = false,
+  onAddReview,
 }: PlaceDetailProps) {
   const category = place.category as CategoryKey;
   const categoryInfo = CATEGORIES[category] || CATEGORIES.other;
@@ -95,7 +97,7 @@ export default function PlaceDetail({
       <div className="sticky bottom-0 bg-white pt-4 pb-2 border-t border-gray-100 mt-4">
         <button
           className="w-full bg-[#FF6B35] text-white py-3 px-4 rounded-full font-medium flex items-center justify-center gap-2 hover:bg-orange-600 transition-colors"
-          onClick={() => {/* Will be implemented in Add Review feature */}}
+          onClick={onAddReview}
         >
           <span>📝</span>
           <span>Add Your Review</span>
