@@ -18,39 +18,16 @@ const Map = dynamic(() => import("@/app/components/Map"), {
   ),
 });
 
-interface UserInfo {
-  nullifier_hash: string;
-  trust_score: number;
-  review_count: number;
-}
-
 type Status = "loading" | "ready" | "error";
 
 export default function HomePage() {
   const router = useRouter();
-  const [user, setUser] = useState<UserInfo | null>(null);
   const [places, setPlaces] = useState<Place[]>([]);
   const [status, setStatus] = useState<Status>("loading");
   const [errorMsg, setErrorMsg] = useState("");
   const [isSigningOut, setIsSigningOut] = useState(false);
-  const [showUserCard, setShowUserCard] = useState(false);
 
   useEffect(() => {
-    // Get user info from cookie
-    const authCookie = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("auth="));
-
-    if (authCookie) {
-      const nullifier = authCookie.split("=")[1];
-      setUser({
-        nullifier_hash: nullifier,
-        trust_score: 50,
-        review_count: 0,
-      });
-    }
-
-    // Fetch places
     fetchPlaces();
   }, []);
 
@@ -80,11 +57,6 @@ export default function HomePage() {
       console.error("Sign out failed:", error);
       setIsSigningOut(false);
     }
-  };
-
-  const truncateHash = (hash: string) => {
-    if (hash.length <= 12) return hash;
-    return `${hash.slice(0, 6)}...${hash.slice(-4)}`;
   };
 
   // Error state
@@ -119,13 +91,13 @@ export default function HomePage() {
       {/* Header overlay */}
       <header className="absolute top-0 left-0 right-0 z-10 p-4">
         <div className="flex justify-between items-center">
-          <button
-            onClick={() => setShowUserCard(!showUserCard)}
-            className="bg-white rounded-full px-4 py-2 shadow-lg flex items-center gap-2"
-          >
+          <div className="bg-white rounded-full px-4 py-2 shadow-lg flex items-center gap-2">
             <span className="text-lg font-bold text-[#1A1A1A]">Masil</span>
             <span className="text-sm text-gray-500">마실</span>
-          </button>
+            <div className="w-5 h-5 bg-[#22C55E] rounded-full flex items-center justify-center ml-1">
+              <span className="text-xs text-white">✓</span>
+            </div>
+          </div>
           <button
             onClick={handleSignOut}
             disabled={isSigningOut}
@@ -135,39 +107,6 @@ export default function HomePage() {
           </button>
         </div>
       </header>
-
-      {/* User card overlay (toggleable) */}
-      {showUserCard && user && (
-        <div className="absolute top-20 left-4 right-4 z-10">
-          <div className="bg-white rounded-2xl p-4 shadow-lg max-w-sm">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-12 h-12 bg-[#22C55E] rounded-full flex items-center justify-center">
-                <span className="text-xl text-white">✓</span>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Verified Human</p>
-                <p className="font-mono text-xs text-gray-400">
-                  {truncateHash(user.nullifier_hash)}
-                </p>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="bg-gray-50 rounded-xl p-3 text-center">
-                <p className="text-xl font-bold text-[#1A1A1A]">
-                  {user.trust_score}
-                </p>
-                <p className="text-xs text-gray-500">Trust Score</p>
-              </div>
-              <div className="bg-gray-50 rounded-xl p-3 text-center">
-                <p className="text-xl font-bold text-[#1A1A1A]">
-                  {user.review_count}
-                </p>
-                <p className="text-xs text-gray-500">Reviews</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Places count indicator */}
       {status === "ready" && (

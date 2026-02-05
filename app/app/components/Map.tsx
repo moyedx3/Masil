@@ -5,6 +5,13 @@ import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { Place, CATEGORIES, CategoryKey } from "@/lib/db";
 
+// Escape HTML to prevent XSS attacks
+function escapeHtml(text: string): string {
+  const div = document.createElement("div");
+  div.textContent = text;
+  return div.innerHTML;
+}
+
 // Set Mapbox token
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || "";
 
@@ -89,16 +96,16 @@ export default function Map({ places }: MapProps) {
         el.style.transform = "scale(1)";
       });
 
-      // Create popup
+      // Create popup with escaped content to prevent XSS
       const popup = new mapboxgl.Popup({
         offset: 25,
         closeButton: false,
         className: "place-popup",
       }).setHTML(`
         <div style="padding: 8px;">
-          <strong style="font-size: 14px; color: #1A1A1A;">${place.name}</strong>
+          <strong style="font-size: 14px; color: #1A1A1A;">${escapeHtml(place.name)}</strong>
           <div style="font-size: 12px; color: #666; margin-top: 4px;">
-            ${categoryInfo.emoji} ${categoryInfo.label}
+            ${categoryInfo.emoji} ${escapeHtml(categoryInfo.label)}
           </div>
         </div>
       `);
