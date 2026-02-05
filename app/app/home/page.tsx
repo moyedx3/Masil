@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
-import { Place, Review } from "@/lib/db";
+import { Place, Review, HelpfulnessVote } from "@/lib/db";
 import BottomSheet from "@/app/components/BottomSheet";
 import PlaceDetail from "@/app/components/PlaceDetail";
 import AddReviewModal from "@/app/components/AddReviewModal";
@@ -25,6 +25,8 @@ type Status = "loading" | "ready" | "error";
 
 interface PlaceWithReviews extends Place {
   reviews: Review[];
+  userVotes: HelpfulnessVote[];
+  currentUserNullifier: string | null;
 }
 
 export default function HomePage() {
@@ -171,13 +173,21 @@ export default function HomePage() {
               <span className="text-xs text-white">✓</span>
             </div>
           </div>
-          <button
-            onClick={handleSignOut}
-            disabled={isSigningOut}
-            className="bg-white rounded-full px-4 py-2 shadow-lg text-gray-600 text-sm"
-          >
-            {isSigningOut ? "..." : "Sign out"}
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => router.push("/profile")}
+              className="bg-white rounded-full w-10 h-10 shadow-lg flex items-center justify-center text-lg"
+            >
+              🧑
+            </button>
+            <button
+              onClick={handleSignOut}
+              disabled={isSigningOut}
+              className="bg-white rounded-full px-4 py-2 shadow-lg text-gray-600 text-sm"
+            >
+              {isSigningOut ? "..." : "Sign out"}
+            </button>
+          </div>
         </div>
       </header>
 
@@ -213,6 +223,8 @@ export default function HomePage() {
             place={selectedPlace}
             reviews={selectedPlace.reviews}
             onAddReview={handleAddReview}
+            currentUserNullifier={selectedPlace.currentUserNullifier}
+            userVotes={selectedPlace.userVotes}
           />
         ) : (
           <div className="text-center py-8">

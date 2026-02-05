@@ -1,6 +1,6 @@
 "use client";
 
-import { Place, Review, CATEGORIES, CategoryKey } from "@/lib/db";
+import { Place, Review, HelpfulnessVote, CATEGORIES, CategoryKey } from "@/lib/db";
 import ReviewCard from "./ReviewCard";
 
 interface PlaceDetailProps {
@@ -8,6 +8,8 @@ interface PlaceDetailProps {
   reviews: Review[];
   isLoading?: boolean;
   onAddReview?: () => void;
+  currentUserNullifier?: string | null;
+  userVotes?: HelpfulnessVote[];
 }
 
 export default function PlaceDetail({
@@ -15,9 +17,15 @@ export default function PlaceDetail({
   reviews,
   isLoading = false,
   onAddReview,
+  currentUserNullifier,
+  userVotes = [],
 }: PlaceDetailProps) {
   const category = place.category as CategoryKey;
   const categoryInfo = CATEGORIES[category] || CATEGORIES.other;
+
+  const voteMap = new Map(
+    userVotes.map((v) => [v.review_id, v.is_helpful ? "helpful" as const : "not_helpful" as const])
+  );
 
   // Open Google Maps directions
   const handleGetDirections = () => {
@@ -87,7 +95,12 @@ export default function PlaceDetail({
         ) : (
           <div>
             {reviews.map((review) => (
-              <ReviewCard key={review.id} review={review} />
+              <ReviewCard
+                key={review.id}
+                review={review}
+                currentUserNullifier={currentUserNullifier}
+                userVote={voteMap.get(review.id)}
+              />
             ))}
           </div>
         )}

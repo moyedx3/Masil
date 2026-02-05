@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createServerClient, Place, Review } from "@/lib/db";
+import { createServerClient, Place, Review, HelpfulnessVote, getUserVotes } from "@/lib/db";
 
 interface PlaceWithReviews extends Place {
   reviews: Review[];
+  userVotes: HelpfulnessVote[];
+  currentUserNullifier: string | null;
 }
 
 export async function GET(
@@ -59,9 +61,19 @@ export async function GET(
       );
     }
 
+    // Fetch user's votes for these reviews
+    // Auth cookie stores the nullifier_hash as a plain string
+    const currentUserNullifier = auth.value || null;
+    const reviewIds = (reviews || []).map((r: Review) => r.id);
+    const userVotes = currentUserNullifier
+      ? await getUserVotes(currentUserNullifier, reviewIds)
+      : [];
+
     const result: PlaceWithReviews = {
       ...place,
       reviews: reviews || [],
+      userVotes,
+      currentUserNullifier,
     };
 
     return NextResponse.json(result);

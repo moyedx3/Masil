@@ -2,9 +2,14 @@
 
 import { useState } from "react";
 import { Review } from "@/lib/db";
+import TrustBadge from "./TrustBadge";
+import VoteButtons from "./VoteButtons";
 
 interface ReviewCardProps {
   review: Review;
+  currentUserNullifier?: string | null;
+  userVote?: "helpful" | "not_helpful" | null;
+  authorTrustScore?: number | null;
 }
 
 // Anonymize author name: "John Doe" -> "J***n D."
@@ -69,9 +74,15 @@ function StarRating({ rating }: { rating: number }) {
   );
 }
 
-export default function ReviewCard({ review }: ReviewCardProps) {
+export default function ReviewCard({
+  review,
+  currentUserNullifier,
+  userVote,
+  authorTrustScore,
+}: ReviewCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const isImported = review.source === "imported";
+  const isOwnReview = !!(currentUserNullifier && review.user_nullifier === currentUserNullifier);
   const contentLimit = 200;
   const isLongContent = review.content.length > contentLimit;
 
@@ -97,6 +108,9 @@ export default function ReviewCard({ review }: ReviewCardProps) {
               ? anonymizeAuthor(review.original_author)
               : "Anonymous User"}
           </span>
+          {!isImported && authorTrustScore != null && (
+            <TrustBadge score={authorTrustScore} showLabel={false} />
+          )}
         </div>
 
         {/* Time */}
@@ -147,29 +161,14 @@ export default function ReviewCard({ review }: ReviewCardProps) {
         </div>
       )}
 
-      {/* Vote buttons (UI only for MVP) */}
-      <div className="flex items-center gap-4 pt-2 border-t border-gray-200">
-        <button
-          className="flex items-center gap-1.5 text-gray-500 hover:text-[#22C55E] transition-colors"
-          onClick={() => {/* Non-functional in MVP */}}
-        >
-          <span>👍</span>
-          <span className="text-xs">Helpful</span>
-          {review.helpful_count > 0 && (
-            <span className="text-xs text-gray-400">({review.helpful_count})</span>
-          )}
-        </button>
-
-        <button
-          className="flex items-center gap-1.5 text-gray-500 hover:text-red-500 transition-colors"
-          onClick={() => {/* Non-functional in MVP */}}
-        >
-          <span>👎</span>
-          {review.not_helpful_count > 0 && (
-            <span className="text-xs text-gray-400">({review.not_helpful_count})</span>
-          )}
-        </button>
-      </div>
+      {/* Vote buttons */}
+      <VoteButtons
+        reviewId={review.id}
+        helpfulCount={review.helpful_count}
+        notHelpfulCount={review.not_helpful_count}
+        userVote={userVote}
+        isOwnReview={isOwnReview}
+      />
     </div>
   );
 }
