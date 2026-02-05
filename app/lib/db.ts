@@ -10,6 +10,47 @@ export interface User {
   updated_at: string;
 }
 
+export interface Place {
+  id: string;
+  name: string;
+  name_korean: string | null;
+  latitude: number;
+  longitude: number;
+  category: string;
+  google_place_id: string | null;
+  address: string | null;
+  created_at: string;
+}
+
+export interface Review {
+  id: string;
+  place_id: string;
+  user_nullifier: string | null;
+  content: string;
+  rating: number | null;
+  tags: string[];
+  helpful_count: number;
+  not_helpful_count: number;
+  source: "user" | "imported";
+  original_platform: string | null;
+  original_author: string | null;
+  imported_at: string | null;
+  created_at: string;
+}
+
+// Category mapping for emoji pins
+export const CATEGORIES = {
+  atm: { emoji: "🏧", label: "ATM" },
+  hospital: { emoji: "🏥", label: "Hospital/Clinic" },
+  pharmacy: { emoji: "💊", label: "Pharmacy" },
+  restaurant: { emoji: "🍽️", label: "Restaurant" },
+  cafe: { emoji: "☕", label: "Cafe" },
+  service: { emoji: "🔧", label: "Service" },
+  other: { emoji: "📍", label: "Other" },
+} as const;
+
+export type CategoryKey = keyof typeof CATEGORIES;
+
 // Server-side client (uses secret key for full access)
 export function createServerClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -64,4 +105,39 @@ export async function upsertUser(
   }
 
   return data as User;
+}
+
+// Get all places
+export async function getPlaces(): Promise<Place[]> {
+  const supabase = createServerClient();
+
+  const { data, error } = await supabase
+    .from("places")
+    .select("*")
+    .order("name");
+
+  if (error) {
+    console.error("Error fetching places:", error);
+    return [];
+  }
+
+  return data as Place[];
+}
+
+// Get reviews for a place
+export async function getReviewsByPlace(placeId: string): Promise<Review[]> {
+  const supabase = createServerClient();
+
+  const { data, error } = await supabase
+    .from("reviews")
+    .select("*")
+    .eq("place_id", placeId)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching reviews:", error);
+    return [];
+  }
+
+  return data as Review[];
 }

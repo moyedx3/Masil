@@ -15,15 +15,18 @@ CREATE INDEX IF NOT EXISTS idx_users_wallet ON users(wallet_address);
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 
 -- Policy: Allow public read access
+DROP POLICY IF EXISTS "Users are publicly readable" ON users;
 CREATE POLICY "Users are publicly readable"
   ON users FOR SELECT
   USING (true);
 
 -- Policy: Allow service role to insert/update
+DROP POLICY IF EXISTS "Service can insert users" ON users;
 CREATE POLICY "Service can insert users"
   ON users FOR INSERT
   WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Service can update users" ON users;
 CREATE POLICY "Service can update users"
   ON users FOR UPDATE
   USING (true)

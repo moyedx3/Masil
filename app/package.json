@@ -6,20 +6,25 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "filter-reviews": "npx ts-node scripts/filter-reviews.ts",
+    "import-seed": "npx ts-node scripts/import-seed-data.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.1",
     "@tailwindcss/postcss": "^4.1.18",
     "@worldcoin/minikit-js": "^1.7.2",
+    "mapbox-gl": "^3.18.1",
     "next": "16.1.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
+    "@types/mapbox-gl": "^3.4.1",
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv": "^17.2.3",
     "postcss": "^8",
     "tailwindcss": "^4",
     "typescript": "^5"
