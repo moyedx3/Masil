@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
-import { Place } from "@/lib/db";
+import { Place, Review } from "@/lib/db";
+import BottomSheet from "@/app/components/BottomSheet";
+import PlaceDetail from "@/app/components/PlaceDetail";
 
 // Dynamically import Map to avoid SSR issues with Mapbox
 const Map = dynamic(() => import("@/app/components/Map"), {
@@ -20,12 +22,22 @@ const Map = dynamic(() => import("@/app/components/Map"), {
 
 type Status = "loading" | "ready" | "error";
 
+interface PlaceWithReviews extends Place {
+  reviews: Review[];
+}
+
 export default function HomePage() {
   const router = useRouter();
   const [places, setPlaces] = useState<Place[]>([]);
   const [status, setStatus] = useState<Status>("loading");
   const [errorMsg, setErrorMsg] = useState("");
   const [isSigningOut, setIsSigningOut] = useState(false);
+
+  // Bottom sheet state
+  const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
+  const [selectedPlace, setSelectedPlace] = useState<PlaceWithReviews | null>(null);
+  const [isLoadingPlace, setIsLoadingPlace] = useState(false);
+  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
 
   useEffect(() => {
     fetchPlaces();
@@ -59,6 +71,35 @@ export default function HomePage() {
     }
   };
 
+  // Handle place selection from map
+  const handlePlaceSelect = useCallback(async (placeId: string) => {
+    setSelectedPlaceId(placeId);
+    setIsBottomSheetOpen(true);
+    setIsLoadingPlace(true);
+
+    try {
+      const res = await fetch(`/api/places/${placeId}/reviews`);
+      if (!res.ok) {
+        throw new Error("Failed to fetch place details");
+      }
+      const data: PlaceWithReviews = await res.json();
+      setSelectedPlace(data);
+    } catch (error) {
+      console.error("Error fetching place details:", error);
+      // Still show the sheet but with error state
+      setSelectedPlace(null);
+    } finally {
+      setIsLoadingPlace(false);
+    }
+  }, []);
+
+  // Handle bottom sheet close
+  const handleBottomSheetClose = useCallback(() => {
+    setIsBottomSheetOpen(false);
+    setSelectedPlaceId(null);
+    setSelectedPlace(null);
+  }, []);
+
   // Error state
   if (status === "error") {
     return (
@@ -85,7 +126,7 @@ export default function HomePage() {
     <main className="relative min-h-screen">
       {/* Map takes full screen */}
       <div className="absolute inset-0">
-        <Map places={places} />
+        <Map places={places} onPlaceSelect={handlePlaceSelect} />
       </div>
 
       {/* Header overlay */}
@@ -109,13 +150,50 @@ export default function HomePage() {
       </header>
 
       {/* Places count indicator */}
-      {status === "ready" && (
+      {status === "ready" && !isBottomSheetOpen && (
         <div className="absolute bottom-6 left-4 z-10">
           <div className="bg-white rounded-full px-4 py-2 shadow-lg text-sm text-gray-600">
             {places.length} places
           </div>
         </div>
       )}
+
+      {/* Bottom Sheet with Place Details */}
+      <BottomSheet isOpen={isBottomSheetOpen} onClose={handleBottomSheetClose}>
+        {isLoadingPlace ? (
+          <PlaceDetail
+            place={{
+              id: "",
+              name: "Loading...",
+              name_korean: null,
+              latitude: 0,
+              longitude: 0,
+              category: "other",
+              google_place_id: null,
+              address: null,
+              created_at: "",
+            }}
+            reviews={[]}
+            isLoading={true}
+          />
+        ) : selectedPlace ? (
+          <PlaceDetail
+            place={selectedPlace}
+            reviews={selectedPlace.reviews}
+          />
+        ) : (
+          <div className="text-center py-8">
+            <div className="text-4xl mb-3">😕</div>
+            <p className="text-gray-500">Failed to load place details</p>
+            <button
+              onClick={() => selectedPlaceId && handlePlaceSelect(selectedPlaceId)}
+              className="mt-4 text-[#FF6B35] font-medium"
+            >
+              Try again
+            </button>
+          </div>
+        )}
+      </BottomSheet>
     </main>
   );
 }
