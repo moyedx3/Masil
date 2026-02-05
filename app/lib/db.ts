@@ -38,6 +38,33 @@ export interface Review {
   created_at: string;
 }
 
+export interface HelpfulnessVote {
+  id: string;
+  review_id: string;
+  voter_nullifier: string;
+  is_helpful: boolean;
+  created_at: string;
+}
+
+// Trust score tiers
+export const TRUST_TIERS = {
+  trusted: { min: 80, color: "#22C55E", label: "Trusted Local" },
+  reliable: { min: 60, color: "#3B82F6", label: "Reliable" },
+  new: { min: 40, color: "#9CA3AF", label: "New User" },
+  low: { min: 20, color: "#F97316", label: "Low Trust" },
+  untrusted: { min: 0, color: "#EF4444", label: "Untrusted" },
+} as const;
+
+export type TrustTierKey = keyof typeof TRUST_TIERS;
+
+export function getTrustTier(score: number): { key: TrustTierKey; color: string; label: string } {
+  if (score >= 80) return { key: "trusted", ...TRUST_TIERS.trusted };
+  if (score >= 60) return { key: "reliable", ...TRUST_TIERS.reliable };
+  if (score >= 40) return { key: "new", ...TRUST_TIERS.new };
+  if (score >= 20) return { key: "low", ...TRUST_TIERS.low };
+  return { key: "untrusted", ...TRUST_TIERS.untrusted };
+}
+
 // Category mapping for emoji pins
 export const CATEGORIES = {
   atm: { emoji: "🏧", label: "ATM" },
@@ -188,4 +215,144 @@ export async function getReviewsByPlace(placeId: string): Promise<Review[]> {
   }
 
   return data as Review[];
+}
+
+// Get user's vote for specific reviews
+export async function getUserVotes(
+  voterNullifier: string,
+  reviewIds: string[]
+): Promise<HelpfulnessVote[]> {
+  if (reviewIds.length === 0) return [];
+  const supabase = createServerClient();
+
+  const { data, error } = await supabase
+    .from("helpfulness_votes")
+    .select("*")
+    .eq("voter_nullifier", voterNullifier)
+    .in("review_id", reviewIds);
+
+  if (error) {
+    console.error("Error fetching user votes:", error);
+    return [];
+  }
+
+  return data as HelpfulnessVote[];
+}
+
+// Submit or update a vote
+export async function submitVote(
+  reviewId: string,
+  voterNullifier: string,
+  isHelpful: boolean
+): Promise<{ vote: HelpfulnessVote; review: Review } | null> {
+  const supabase = createServerClient();
+
+  // Upsert the vote
+  const { data: vote, error: voteError } = await supabase
+    .from("helpfulness_votes")
+    .upsert(
+      { review_id: reviewId, voter_nullifier: voterNullifier, is_helpful: isHelpful },
+      { onConflict: "review_id,voter_nullifier" }
+    )
+    .select()
+    .single();
+
+  if (voteError) {
+    console.error("Error submitting vote:", voteError);
+    return null;
+  }
+
+  // Recount votes for the review
+  const { count: helpfulCount } = await supabase
+    .from("helpfulness_votes")
+    .select("*", { count: "exact", head: true })
+    .eq("review_id", reviewId)
+    .eq("is_helpful", true);
+
+  const { count: notHelpfulCount } = await supabase
+    .from("helpfulness_votes")
+    .select("*", { count: "exact", head: true })
+    .eq("review_id", reviewId)
+    .eq("is_helpful", false);
+
+  // Update review counts
+  const { data: review, error: updateError } = await supabase
+    .from("reviews")
+    .update({
+      helpful_count: helpfulCount || 0,
+      not_helpful_count: notHelpfulCount || 0,
+    })
+    .eq("id", reviewId)
+    .select()
+    .single();
+
+  if (updateError) {
+    console.error("Error updating review counts:", updateError);
+    return null;
+  }
+
+  // Recalculate author trust score
+  if (review.user_nullifier) {
+    await recalculateTrustScore(review.user_nullifier);
+  }
+
+  return { vote: vote as HelpfulnessVote, review: review as Review };
+}
+
+// Recalculate trust score for a user based on all votes on their reviews
+async function recalculateTrustScore(userNullifier: string): Promise<void> {
+  const supabase = createServerClient();
+
+  const { data: reviews } = await supabase
+    .from("reviews")
+    .select("helpful_count, not_helpful_count")
+    .eq("user_nullifier", userNullifier);
+
+  if (!reviews) return;
+
+  const totalHelpful = reviews.reduce((sum, r) => sum + (r.helpful_count || 0), 0);
+  const totalNotHelpful = reviews.reduce((sum, r) => sum + (r.not_helpful_count || 0), 0);
+
+  // Base 50 + 2 per helpful - 3 per not helpful, clamped to 0-100
+  const score = Math.max(0, Math.min(100, 50 + totalHelpful * 2 - totalNotHelpful * 3));
+
+  await supabase
+    .from("users")
+    .update({ trust_score: score, updated_at: new Date().toISOString() })
+    .eq("nullifier_hash", userNullifier);
+}
+
+// Get user profile with stats
+export async function getUserProfile(nullifierHash: string) {
+  const supabase = createServerClient();
+
+  const user = await getUser(nullifierHash);
+  if (!user) return null;
+
+  // Get user's reviews with place names
+  const { data: reviews } = await supabase
+    .from("reviews")
+    .select("*, places(name)")
+    .eq("user_nullifier", nullifierHash)
+    .order("created_at", { ascending: false });
+
+  // Count total helpful votes received
+  const { data: userReviews } = await supabase
+    .from("reviews")
+    .select("helpful_count")
+    .eq("user_nullifier", nullifierHash);
+
+  const helpfulVotesReceived = userReviews?.reduce((sum, r) => sum + (r.helpful_count || 0), 0) || 0;
+
+  return {
+    user,
+    stats: {
+      review_count: user.review_count,
+      helpful_votes_received: helpfulVotesReceived,
+    },
+    reviews: (reviews || []).map((r: Record<string, unknown>) => ({
+      ...r,
+      place_name: (r.places as { name: string } | null)?.name || "Unknown Place",
+    })),
+  };
 }
