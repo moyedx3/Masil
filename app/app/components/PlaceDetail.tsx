@@ -81,6 +81,17 @@ export default function PlaceDetail({
         <span>Get Directions</span>
       </button>
 
+      {/* Add Review CTA - inline before reviews */}
+      {onAddReview && (
+        <button
+          className="w-full py-3 px-4 rounded-xl border-2 border-dashed border-[#D2DCB6] text-[#778873] font-medium flex items-center justify-center gap-2 hover:border-[#B87C4C] hover:text-[#B87C4C] transition-colors mb-4"
+          onClick={onAddReview}
+        >
+          <span>📝</span>
+          <span>What do you think?</span>
+        </button>
+      )}
+
       {/* Reviews Section */}
       <div className="border-t border-[#D2DCB6] pt-4">
         <h3 className="text-lg font-semibold text-[#1A1A1A] mb-4">
@@ -105,20 +116,6 @@ export default function PlaceDetail({
             ))}
           </div>
         )}
-      </div>
-
-      {/* Add Review CTA */}
-      <div className="sticky bottom-0 bg-[#F7F4EA] pt-4 pb-2 border-t border-[#D2DCB6] mt-4">
-        <button
-          className="w-full bg-[#B87C4C] text-white py-3 px-4 rounded-full font-medium flex items-center justify-center gap-2 hover:opacity-90 transition-colors"
-          onClick={onAddReview}
-        >
-          <span>📝</span>
-          <span>Add Your Review</span>
-        </button>
-        <p className="text-xs text-[#778873] text-center mt-2">
-          Requires GPS verification within 50m
-        </p>
       </div>
     </div>
   );

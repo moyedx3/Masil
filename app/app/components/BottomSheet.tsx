@@ -156,18 +156,21 @@ export default function BottomSheet({
 
   return (
     <>
-      {/* Backdrop */}
+      {/* Backdrop - light tint at peek, stronger above */}
       <div
-        className={`fixed inset-0 bg-black/30 z-40 transition-opacity duration-300 ${
-          height > SNAP_POINTS.peek ? "opacity-100" : "opacity-0 pointer-events-none"
-        }`}
+        className="fixed inset-0 z-40 transition-opacity duration-300"
+        style={{
+          backgroundColor: "rgba(0,0,0,0.3)",
+          opacity: height <= SNAP_POINTS.closed ? 0 : height <= SNAP_POINTS.peek ? 0.15 : 1,
+          pointerEvents: height > SNAP_POINTS.peek ? "auto" : "none",
+        }}
         onClick={handleBackdropClick}
       />
 
       {/* Bottom Sheet */}
       <div
         ref={sheetRef}
-        className="fixed bottom-0 left-0 right-0 z-50 bg-[#F7F4EA] rounded-t-3xl shadow-[0_-4px_20px_rgba(0,0,0,0.15)]"
+        className="fixed bottom-0 left-0 right-0 z-50 bg-[#F7F4EA] rounded-t-3xl shadow-[0_-8px_30px_rgba(0,0,0,0.12)]"
         style={{
           height: `${height}vh`,
           transition: isDragging ? "none" : "height 0.3s ease-out",
@@ -176,19 +179,19 @@ export default function BottomSheet({
       >
         {/* Drag Handle */}
         <div
-          className="w-full py-4 cursor-grab active:cursor-grabbing flex justify-center"
+          className="w-full py-3 cursor-grab active:cursor-grabbing flex justify-center"
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
           onMouseDown={handleMouseDown}
         >
-          <div className="w-10 h-1 bg-[#D2DCB6] rounded-full" />
+          <div className="w-12 h-1.5 bg-[#D2DCB6] rounded-full" />
         </div>
 
         {/* Content */}
         <div
           className="overflow-y-auto px-4 pb-8"
-          style={{ height: `calc(${height}vh - 56px)` }}
+          style={{ height: `calc(${height}vh - 48px)` }}
         >
           {children}
         </div>

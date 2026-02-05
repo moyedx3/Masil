@@ -71,34 +71,30 @@ export default function Map({ places, onPlaceSelect }: MapProps) {
       const category = place.category as CategoryKey;
       const categoryInfo = CATEGORIES[category] || CATEGORIES.other;
 
-      // Create custom marker element
+      // Create custom marker element with explicit dimensions for stable anchoring
       const el = document.createElement("div");
       el.className = "emoji-marker";
       el.style.cssText = `
+        width: 36px;
+        height: 36px;
         font-size: 28px;
+        line-height: 36px;
+        text-align: center;
         cursor: pointer;
         filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
-        transition: transform 0.2s ease;
       `;
       el.textContent = categoryInfo.emoji;
 
-      // Hover effect
-      el.addEventListener("mouseenter", () => {
-        el.style.transform = "scale(1.2)";
-      });
-      el.addEventListener("mouseleave", () => {
-        el.style.transform = "scale(1)";
-      });
-
       // Click handler - emit place selection
-      el.addEventListener("click", () => {
+      el.addEventListener("click", (e) => {
+        e.stopPropagation();
         if (onPlaceSelect) {
           onPlaceSelect(place.id);
         }
       });
 
-      // Create marker without popup
-      new mapboxgl.Marker({ element: el })
+      // Create marker with explicit center anchor
+      new mapboxgl.Marker({ element: el, anchor: "center" })
         .setLngLat([place.longitude, place.latitude])
         .addTo(map.current!);
     });

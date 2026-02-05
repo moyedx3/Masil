@@ -77,7 +77,6 @@ export default function AuthPage() {
           <div className="bg-[#B87C4C] rounded-2xl px-6 py-4 mb-3">
             <Image src="/logo.png" alt="masil." width={200} height={80} className="h-12 w-auto" priority />
           </div>
-          <p className="text-xl text-[#778873] font-light mt-1">마실</p>
         </div>
 
         <p className="text-[#778873] mb-6 max-w-xs">
