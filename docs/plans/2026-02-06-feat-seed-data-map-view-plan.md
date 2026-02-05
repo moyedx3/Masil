@@ -219,7 +219,7 @@ interface OutscraperReview {
 
 ### Phase 4: Map Component
 - [x] Install `mapbox-gl` and `@types/mapbox-gl`
-- [ ] Add `NEXT_PUBLIC_MAPBOX_TOKEN` to `.env.local`
+- [x] Add `NEXT_PUBLIC_MAPBOX_TOKEN` to `.env.local`
 - [x] Create `app/app/components/Map.tsx` (Mapbox with pins)
 - [x] Update `app/app/home/page.tsx` to use Map component
 - [x] Implement emoji pin markers by category
