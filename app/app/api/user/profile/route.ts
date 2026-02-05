@@ -10,17 +10,8 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  let authData: { nullifier_hash?: string } = {};
-  try {
-    authData = JSON.parse(auth.value);
-  } catch {
-    return NextResponse.json(
-      { error: "Invalid auth data" },
-      { status: 401 }
-    );
-  }
-
-  const nullifierHash = authData.nullifier_hash;
+  // Auth cookie stores the nullifier_hash as a plain string
+  const nullifierHash = auth.value;
   if (!nullifierHash) {
     return NextResponse.json(
       { error: "No user identifier found" },

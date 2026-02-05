@@ -62,13 +62,8 @@ export async function GET(
     }
 
     // Fetch user's votes for these reviews
-    let authData: { nullifier_hash?: string } = {};
-    try {
-      authData = JSON.parse(auth.value);
-    } catch {
-      // ignore parse errors
-    }
-    const currentUserNullifier = authData.nullifier_hash || null;
+    // Auth cookie stores the nullifier_hash as a plain string
+    const currentUserNullifier = auth.value || null;
     const reviewIds = (reviews || []).map((r: Review) => r.id);
     const userVotes = currentUserNullifier
       ? await getUserVotes(currentUserNullifier, reviewIds)
