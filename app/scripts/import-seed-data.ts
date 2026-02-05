@@ -98,32 +98,41 @@ async function main() {
   let reviewsImported = 0;
 
   for (const place of places) {
-    // Insert place
-    const { data: placeData, error: placeError } = await supabase
+    // Check if place already exists
+    const { data: existingPlace } = await supabase
       .from("places")
-      .upsert(
-        {
+      .select("id")
+      .eq("google_place_id", place.google_place_id)
+      .single();
+
+    let placeId: string;
+
+    if (existingPlace) {
+      placeId = existingPlace.id;
+      console.log(`  ↳ Place already exists, skipping insert`);
+    } else {
+      // Insert place
+      const { data: placeData, error: placeError } = await supabase
+        .from("places")
+        .insert({
           name: place.name,
           latitude: place.latitude,
           longitude: place.longitude,
           category: place.category,
           google_place_id: place.google_place_id,
           address: place.address,
-        },
-        {
-          onConflict: "google_place_id",
-        }
-      )
-      .select()
-      .single();
+        })
+        .select()
+        .single();
 
-    if (placeError) {
-      console.error(`Error inserting place "${place.name}":`, placeError.message);
-      continue;
+      if (placeError) {
+        console.error(`Error inserting place "${place.name}":`, placeError.message);
+        continue;
+      }
+      placeId = placeData.id;
     }
 
     placesImported++;
-    const placeId = placeData.id;
 
     // Insert reviews
     for (const review of place.reviews) {

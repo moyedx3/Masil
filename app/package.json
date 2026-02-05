@@ -7,8 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "filter-reviews": "npx ts-node scripts/filter-reviews.ts",
-    "import-seed": "npx ts-node scripts/import-seed-data.ts"
+    "scrape-places": "tsx scripts/scrape-places.ts",
+    "filter-reviews": "tsx scripts/filter-reviews.ts",
+    "import-seed": "tsx scripts/import-seed-data.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.1",
@@ -27,6 +28,7 @@
     "dotenv": "^17.2.3",
     "postcss": "^8",
     "tailwindcss": "^4",
+    "tsx": "^4.21.0",
     "typescript": "^5"
   }
 }

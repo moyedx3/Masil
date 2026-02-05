@@ -1,0 +1,21 @@
+# Masil Seed Data - Google Maps URLs
+# Restaurants
+https://www.google.com/maps/search/Gwangjang+Market+Seoul
+https://www.google.com/maps/search/Tosokchon+Samgyetang+Seoul
+https://www.google.com/maps/search/Imun+Seolnongtang+Seoul
+https://www.google.com/maps/search/Dongmyo+Flea+Market+Seoul
+https://www.google.com/maps/search/Yukjeon+Sikdang+Sinseol+Seoul
+
+# Cafes
+https://www.google.com/maps/search/Cafe+Onion+Anguk+Seoul
+https://www.google.com/maps/search/Fritz+Coffee+Wonseo+Seoul
+https://www.google.com/maps/search/Starbucks+Jongno+Tower+Seoul
+https://www.google.com/maps/search/Bukchon+Hanok+Cafe+Seoul
+https://www.google.com/maps/search/Ikseon+dong+cafe+Seoul
+
+# Services
+https://www.google.com/maps/search/Olive+Young+Jongno+Seoul
+https://www.google.com/maps/search/pharmacy+Dongmyo+Station+Seoul
+https://www.google.com/maps/search/KB+Bank+Jongno+Seoul
+https://www.google.com/maps/search/Dongdaemun+Hospital+Seoul
+https://www.google.com/maps/search/GS25+Sinseol+dong+Seoul
