@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
-import { Place, Review } from "@/lib/db";
+import { Place, Review, HelpfulnessVote } from "@/lib/db";
 import BottomSheet from "@/app/components/BottomSheet";
 import PlaceDetail from "@/app/components/PlaceDetail";
 import AddReviewModal from "@/app/components/AddReviewModal";
@@ -25,6 +25,8 @@ type Status = "loading" | "ready" | "error";
 
 interface PlaceWithReviews extends Place {
   reviews: Review[];
+  userVotes: HelpfulnessVote[];
+  currentUserNullifier: string | null;
 }
 
 export default function HomePage() {
@@ -213,6 +215,8 @@ export default function HomePage() {
             place={selectedPlace}
             reviews={selectedPlace.reviews}
             onAddReview={handleAddReview}
+            currentUserNullifier={selectedPlace.currentUserNullifier}
+            userVotes={selectedPlace.userVotes}
           />
         ) : (
           <div className="text-center py-8">

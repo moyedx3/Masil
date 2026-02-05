@@ -217,7 +217,7 @@ export async function getReviewsByPlace(placeId: string): Promise<Review[]> {
   return data as Review[];
 }
 
-// Get user's vote for specific reviews
+// Get user's votes for specific reviews
 export async function getUserVotes(
   voterNullifier: string,
   reviewIds: string[]
