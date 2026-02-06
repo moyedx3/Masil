@@ -230,10 +230,10 @@ export default function HomePage() {
         <Map places={filteredPlaces} onPlaceSelect={handlePlaceSelect} />
       </div>
 
-      {/* Header overlay */}
+      {/* Header overlay: logo + category filter on same line */}
       <header className="absolute top-0 left-0 right-0 z-10 p-4">
-        <div className="flex items-center">
-          <div className="bg-[#F7F4EA] rounded-full px-3 py-2 shadow-lg flex items-center gap-2">
+        <div className="flex items-center gap-3">
+          <div className="bg-[#F7F4EA] rounded-full px-3 py-2 shadow-lg flex items-center gap-2 shrink-0">
             <div className="bg-[#B87C4C] rounded-lg px-2 py-1">
               <Image src="/logo.png" alt="masil." width={100} height={40} className="h-5 w-auto" />
             </div>
@@ -248,17 +248,18 @@ export default function HomePage() {
               </div>
             )}
           </div>
+
+          {/* Category filter inline */}
+          {status === "ready" && (
+            <CategoryFilterBar
+              places={places}
+              selectedCategory={selectedCategory}
+              onSelectCategory={handleCategorySelect}
+              inline
+            />
+          )}
         </div>
       </header>
-
-      {/* Category filter bar */}
-      {status === "ready" && (
-        <CategoryFilterBar
-          places={places}
-          selectedCategory={selectedCategory}
-          onSelectCategory={handleCategorySelect}
-        />
-      )}
 
       {/* Places count indicator */}
       {status === "ready" && !isBottomSheetOpen && (
