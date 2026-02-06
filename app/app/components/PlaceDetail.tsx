@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import { Place, Review, HelpfulnessVote, CATEGORIES, CategoryKey, AccessTier } from "@/lib/db";
 import ReviewCard from "./ReviewCard";
+import CategoryIcon from "./CategoryIcon";
 
 type AuthTier = AccessTier | "anonymous";
 
@@ -75,7 +76,7 @@ export default function PlaceDetail({
           <p className="text-sm text-[#778873] mb-2">{place.name_korean}</p>
         )}
         <div className="flex items-center gap-2 text-sm text-[#778873]">
-          <span>{categoryInfo.emoji}</span>
+          <CategoryIcon category={category} size={24} />
           <span>{categoryInfo.label}</span>
         </div>
       </div>
