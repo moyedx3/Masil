@@ -405,7 +405,9 @@ function AuthModal({
         return;
       }
 
-      const reference = crypto.randomUUID().replace(/-/g, "");
+      // Initialize payment reference on backend
+      const initRes = await fetch("/api/auth/initiate-payment", { method: "POST" });
+      const { id: reference } = await initRes.json();
 
       const { finalPayload } = await MiniKit.commandsAsync.pay({
         reference,
@@ -413,7 +415,7 @@ function AuthModal({
         tokens: [
           {
             symbol: Tokens.USDC,
-            token_amount: tokenToDecimals(0.01, Tokens.USDC).toString(),
+            token_amount: tokenToDecimals(0.1, Tokens.USDC).toString(),
           },
         ],
         description: "Masil - View-only access to reviews",
@@ -499,7 +501,7 @@ function AuthModal({
           onClick={handleVerify}
           disabled={status === "verifying" || status === "paying" || status === "success"}
           className="w-full py-4 px-6 rounded-full font-medium text-white text-base
-                     bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6]
+                     bg-[#B87C4C]
                      hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed
                      transition-all duration-200 shadow-lg mb-3"
         >
@@ -540,7 +542,7 @@ function AuthModal({
               Processing...
             </span>
           ) : (
-            "Pay $0.01 USDC to read reviews"
+            "Pay $0.10 USDC to read reviews"
           )}
         </button>
 

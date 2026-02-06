@@ -158,7 +158,7 @@ export default function AuthGate({ onVerifySuccess }: AuthGateProps) {
         onClick={handleVerify}
         disabled={status === "verifying" || status === "success"}
         className="w-full max-w-sm py-4 px-6 rounded-full font-medium text-white text-lg
-                   bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6]
+                   bg-[#B87C4C]
                    hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed
                    transition-all duration-200 shadow-lg mb-4"
       >
@@ -190,7 +190,7 @@ export default function AuthGate({ onVerifySuccess }: AuthGateProps) {
                    hover:bg-[#EBD9D1] disabled:opacity-50 disabled:cursor-not-allowed
                    transition-all duration-200 mb-8"
       >
-        Pay $0.01 for view-only access
+        Pay $0.10 for view-only access
       </button>
 
       {/* FAQ Section */}

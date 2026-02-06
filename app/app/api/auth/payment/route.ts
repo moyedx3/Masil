@@ -23,7 +23,11 @@ export async function POST(req: NextRequest) {
     }
 
     const verifyUrl = `https://developer.worldcoin.org/api/v2/minikit/transaction/${transaction_id}?app_id=${appId}&type=payment`;
-    const verifyRes = await fetch(verifyUrl);
+    const verifyRes = await fetch(verifyUrl, {
+      headers: {
+        Authorization: `Bearer ${process.env.DEV_PORTAL_API_KEY}`,
+      },
+    });
 
     if (!verifyRes.ok) {
       console.error("World API verification failed:", verifyRes.status);

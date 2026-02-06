@@ -135,7 +135,7 @@ export default function PlaceDetail({
                   <button
                     onClick={onRequestAuth}
                     className="w-full py-3 px-4 rounded-full font-medium text-white text-sm
-                               bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6]
+                               bg-[#B87C4C]
                                hover:opacity-90 transition-all shadow-md mb-2"
                   >
                     Verify with World ID
@@ -145,7 +145,7 @@ export default function PlaceDetail({
                     className="w-full py-2.5 px-4 rounded-full font-medium text-[#778873] text-sm
                                border border-[#D2DCB6] hover:bg-white/50 transition-all"
                   >
-                    Pay $0.01 to read
+                    Pay $0.10 to read
                   </button>
                 </div>
               </div>
