@@ -5,6 +5,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 interface BottomSheetProps {
   isOpen: boolean;
   onClose: () => void;
+  onSnapChange?: (snapPoint: "closed" | "peek" | "half" | "full") => void;
   children: React.ReactNode;
 }
 
@@ -19,6 +20,7 @@ const SNAP_POINTS = {
 export default function BottomSheet({
   isOpen,
   onClose,
+  onSnapChange,
   children,
 }: BottomSheetProps) {
   const sheetRef = useRef<HTMLDivElement>(null);
@@ -26,6 +28,15 @@ export default function BottomSheet({
   const [isDragging, setIsDragging] = useState(false);
   const startY = useRef(0);
   const startHeight = useRef(0);
+
+  // Report snap state changes
+  useEffect(() => {
+    if (isDragging || !onSnapChange) return;
+    if (height === SNAP_POINTS.full) onSnapChange("full");
+    else if (height === SNAP_POINTS.half) onSnapChange("half");
+    else if (height === SNAP_POINTS.peek) onSnapChange("peek");
+    else if (height === SNAP_POINTS.closed) onSnapChange("closed");
+  }, [height, isDragging, onSnapChange]);
 
   // Open to peek position when isOpen changes to true
   useEffect(() => {
