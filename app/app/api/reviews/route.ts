@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createReview, getPlace, getUser } from "@/lib/db";
 import { haversineDistance } from "@/lib/geo";
+import { rateLimit } from "@/lib/rate-limit";
 
 interface CreateReviewBody {
   place_id: string;
@@ -28,6 +29,23 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         { success: false, error: "User not found" },
         { status: 401 }
+      );
+    }
+
+    // Only orb-verified users can post reviews (paid tier is view-only)
+    if (user.access_tier !== "orb") {
+      return NextResponse.json(
+        { success: false, error: "Only Orb-verified users can post reviews" },
+        { status: 403 }
+      );
+    }
+
+    // Rate limit: 10 reviews per day per user
+    const { allowed } = rateLimit(`review:${auth.value}`, 10);
+    if (!allowed) {
+      return NextResponse.json(
+        { success: false, error: "Rate limit exceeded. Try again tomorrow." },
+        { status: 429 }
       );
     }
 

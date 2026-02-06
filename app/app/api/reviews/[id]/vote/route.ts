@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser, submitVote, createServerClient } from "@/lib/db";
+import { rateLimit } from "@/lib/rate-limit";
 
 export async function POST(
   req: NextRequest,
@@ -19,6 +20,23 @@ export async function POST(
     return NextResponse.json(
       { error: "Invalid session" },
       { status: 401 }
+    );
+  }
+
+  // Only orb-verified users can vote (paid tier is view-only)
+  if (voter.access_tier !== "orb") {
+    return NextResponse.json(
+      { error: "Only Orb-verified users can vote" },
+      { status: 403 }
+    );
+  }
+
+  // Rate limit: 50 votes per day per user
+  const { allowed } = rateLimit(`vote:${auth.value}`, 50);
+  if (!allowed) {
+    return NextResponse.json(
+      { error: "Rate limit exceeded. Try again tomorrow." },
+      { status: 429 }
     );
   }
 
