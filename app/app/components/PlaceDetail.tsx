@@ -13,7 +13,7 @@ interface PlaceDetailProps {
   isLoading?: boolean;
   onAddReview?: () => void;
   onRequestAuth?: () => void;
-  currentUserNullifier?: string | null;
+  isAuthenticated?: boolean;
   userVotes?: HelpfulnessVote[];
   authTier?: AuthTier;
 }
@@ -24,7 +24,7 @@ export default function PlaceDetail({
   isLoading = false,
   onAddReview,
   onRequestAuth,
-  currentUserNullifier,
+  isAuthenticated = false,
   userVotes = [],
   authTier = "orb",
 }: PlaceDetailProps) {
@@ -156,7 +156,7 @@ export default function PlaceDetail({
               <ReviewCard
                 key={review.id}
                 review={review}
-                currentUserNullifier={currentUserNullifier}
+                isOwnReview={(review as Review & { isOwnReview?: boolean }).isOwnReview ?? false}
                 userVote={isUnlocked ? voteMap.get(review.id) : undefined}
                 blurred={!isUnlocked}
                 showVotes={authTier === "orb"}

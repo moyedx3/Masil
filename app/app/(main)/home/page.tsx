@@ -42,9 +42,9 @@ const Map = dynamic(() => import("@/app/components/Map"), {
 type Status = "loading" | "ready" | "error";
 
 interface PlaceWithReviews extends Place {
-  reviews: Review[];
+  reviews: (Review & { isOwnReview: boolean })[];
   userVotes: HelpfulnessVote[];
-  currentUserNullifier: string | null;
+  isAuthenticated: boolean;
 }
 
 export default function HomePage() {
@@ -263,7 +263,7 @@ export default function HomePage() {
             reviews={selectedPlace.reviews}
             onAddReview={authTier === "orb" ? handleAddReview : undefined}
             onRequestAuth={handleRequestAuth}
-            currentUserNullifier={selectedPlace.currentUserNullifier}
+            isAuthenticated={selectedPlace.isAuthenticated}
             userVotes={selectedPlace.userVotes}
             authTier={authTier}
           />

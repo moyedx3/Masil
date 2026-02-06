@@ -7,7 +7,7 @@ import VoteButtons from "./VoteButtons";
 
 interface ReviewCardProps {
   review: Review;
-  currentUserNullifier?: string | null;
+  isOwnReview?: boolean;
   userVote?: "helpful" | "not_helpful" | null;
   authorTrustScore?: number | null;
   blurred?: boolean;
@@ -78,7 +78,7 @@ function StarRating({ rating }: { rating: number }) {
 
 export default function ReviewCard({
   review,
-  currentUserNullifier,
+  isOwnReview = false,
   userVote,
   authorTrustScore,
   blurred = false,
@@ -86,7 +86,6 @@ export default function ReviewCard({
 }: ReviewCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const isImported = review.source === "imported";
-  const isOwnReview = !!(currentUserNullifier && review.user_nullifier === currentUserNullifier);
   const contentLimit = 200;
   const isLongContent = review.content.length > contentLimit;
 

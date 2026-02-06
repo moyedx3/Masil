@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerClient, Place, Review, HelpfulnessVote, getUserVotes } from "@/lib/db";
 
 interface PlaceWithReviews extends Place {
-  reviews: Review[];
+  reviews: (Review & { isOwnReview: boolean })[];
   userVotes: HelpfulnessVote[];
-  currentUserNullifier: string | null;
+  isAuthenticated: boolean;
 }
 
 export async function GET(
@@ -63,11 +63,16 @@ export async function GET(
       ? await getUserVotes(currentUserNullifier, reviewIds)
       : [];
 
+    const reviewsWithOwnership = (reviews || []).map((r: Review) => ({
+      ...r,
+      isOwnReview: !!(currentUserNullifier && r.user_nullifier === currentUserNullifier),
+    }));
+
     const result: PlaceWithReviews = {
       ...place,
-      reviews: reviews || [],
+      reviews: reviewsWithOwnership,
       userVotes,
-      currentUserNullifier,
+      isAuthenticated: !!currentUserNullifier,
     };
 
     return NextResponse.json(result);
