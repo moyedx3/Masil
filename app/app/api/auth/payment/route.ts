@@ -47,10 +47,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Only accept completed/mined transactions
-    if (tx.transaction_status !== "mined") {
+    // Reject failed transactions (status may not be "mined" immediately)
+    if (tx.status === "failed") {
       return NextResponse.json(
-        { error: `Transaction not completed (status: ${tx.transaction_status})` },
+        { error: `Transaction failed` },
         { status: 400 }
       );
     }
