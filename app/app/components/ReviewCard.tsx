@@ -10,6 +10,8 @@ interface ReviewCardProps {
   currentUserNullifier?: string | null;
   userVote?: "helpful" | "not_helpful" | null;
   authorTrustScore?: number | null;
+  blurred?: boolean;
+  showVotes?: boolean;
 }
 
 // Anonymize author name: "John Doe" -> "J***n D."
@@ -79,6 +81,8 @@ export default function ReviewCard({
   currentUserNullifier,
   userVote,
   authorTrustScore,
+  blurred = false,
+  showVotes = true,
 }: ReviewCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const isImported = review.source === "imported";
@@ -127,17 +131,17 @@ export default function ReviewCard({
         </div>
       )}
 
-      {/* Rating */}
+      {/* Rating — always visible even when blurred */}
       {review.rating != null && review.rating > 0 && (
         <div className="mb-2">
           <StarRating rating={review.rating} />
         </div>
       )}
 
-      {/* Content */}
-      <p className="text-[#1A1A1A] text-sm leading-relaxed mb-3">
+      {/* Content — blurred for anonymous users */}
+      <p className={`text-[#1A1A1A] text-sm leading-relaxed mb-3 ${blurred ? "select-none blur-[6px]" : ""}`}>
         {displayContent}
-        {isLongContent && (
+        {!blurred && isLongContent && (
           <button
             onClick={() => setIsExpanded(!isExpanded)}
             className="text-[#B87C4C] ml-1 font-medium"
@@ -147,7 +151,7 @@ export default function ReviewCard({
         )}
       </p>
 
-      {/* Tags */}
+      {/* Tags — visible even when blurred */}
       {review.tags && review.tags.length > 0 && (
         <div className="flex flex-wrap gap-1 mb-3">
           {review.tags.map((tag, index) => (
@@ -161,14 +165,16 @@ export default function ReviewCard({
         </div>
       )}
 
-      {/* Vote buttons */}
-      <VoteButtons
-        reviewId={review.id}
-        helpfulCount={review.helpful_count}
-        notHelpfulCount={review.not_helpful_count}
-        userVote={userVote}
-        isOwnReview={isOwnReview}
-      />
+      {/* Vote buttons — only shown for orb-verified users */}
+      {showVotes && (
+        <VoteButtons
+          reviewId={review.id}
+          helpfulCount={review.helpful_count}
+          notHelpfulCount={review.not_helpful_count}
+          userVote={userVote}
+          isOwnReview={isOwnReview}
+        />
+      )}
     </div>
   );
 }

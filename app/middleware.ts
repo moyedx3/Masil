@@ -4,13 +4,6 @@ import type { NextRequest } from "next/server";
 export function middleware(request: NextRequest) {
   const auth = request.cookies.get("auth");
 
-  // Protected routes
-  if (request.nextUrl.pathname.startsWith("/home")) {
-    if (!auth?.value) {
-      return NextResponse.redirect(new URL("/", request.url));
-    }
-  }
-
   // If authenticated user visits landing page, redirect to home
   if (request.nextUrl.pathname === "/" && auth?.value) {
     return NextResponse.redirect(new URL("/home", request.url));

@@ -4,12 +4,14 @@ import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import { Place, Review, HelpfulnessVote } from "@/lib/db";
+import { Place, Review, HelpfulnessVote, AccessTier } from "@/lib/db";
 import BottomSheet from "@/app/components/BottomSheet";
 import PlaceDetail from "@/app/components/PlaceDetail";
 const AddReviewModal = dynamic(() => import("@/app/components/AddReviewModal"), {
   ssr: false,
 });
+
+type AuthTier = AccessTier | "anonymous";
 
 const LOADING_PLACE: Place = {
   id: "",
@@ -52,6 +54,9 @@ export default function HomePage() {
   const [errorMsg, setErrorMsg] = useState("");
   const [isSigningOut, setIsSigningOut] = useState(false);
 
+  // Auth tier: anonymous until checked
+  const [authTier, setAuthTier] = useState<AuthTier>("anonymous");
+
   // Bottom sheet state
   const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
   const [selectedPlace, setSelectedPlace] = useState<PlaceWithReviews | null>(null);
@@ -61,6 +66,30 @@ export default function HomePage() {
   // Add review modal state
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [successToast, setSuccessToast] = useState(false);
+
+  // Auth modal state
+  const [showAuthModal, setShowAuthModal] = useState(false);
+
+  // Check auth on mount
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
+  const checkAuth = async () => {
+    try {
+      const res = await fetch("/api/auth/check");
+      if (res.ok) {
+        const data = await res.json();
+        if (data.authenticated) {
+          setAuthTier(data.access_tier || "orb");
+          return;
+        }
+      }
+    } catch {
+      // Not authenticated — stay anonymous
+    }
+    setAuthTier("anonymous");
+  };
 
   useEffect(() => {
     fetchPlaces();
@@ -86,8 +115,12 @@ export default function HomePage() {
     setIsSigningOut(true);
     try {
       await fetch("/api/auth/signout", { method: "POST" });
-      router.push("/");
-      router.refresh();
+      setAuthTier("anonymous");
+      setIsSigningOut(false);
+      // Close any open sheets
+      setIsBottomSheetOpen(false);
+      setSelectedPlace(null);
+      setSelectedPlaceId(null);
     } catch (error) {
       console.error("Sign out failed:", error);
       setIsSigningOut(false);
@@ -109,7 +142,6 @@ export default function HomePage() {
       setSelectedPlace(data);
     } catch (error) {
       console.error("Error fetching place details:", error);
-      // Still show the sheet but with error state
       setSelectedPlace(null);
     } finally {
       setIsLoadingPlace(false);
@@ -123,10 +155,25 @@ export default function HomePage() {
     setSelectedPlace(null);
   }, []);
 
-  // Open add review modal
+  // Open add review modal (only for orb users)
   const handleAddReview = useCallback(() => {
     setIsReviewModalOpen(true);
   }, []);
+
+  // Handle request to authenticate (from unlock CTA or write button)
+  const handleRequestAuth = useCallback(() => {
+    setShowAuthModal(true);
+  }, []);
+
+  // Handle auth success (verify or pay)
+  const handleAuthSuccess = useCallback((tier: AccessTier) => {
+    setAuthTier(tier);
+    setShowAuthModal(false);
+    // Re-fetch current place to get user votes if now authenticated
+    if (selectedPlaceId) {
+      handlePlaceSelect(selectedPlaceId);
+    }
+  }, [selectedPlaceId, handlePlaceSelect]);
 
   // Handle successful review post
   const handleReviewSuccess = useCallback(() => {
@@ -186,25 +233,36 @@ export default function HomePage() {
             <div className="bg-[#B87C4C] rounded-lg px-2 py-1">
               <Image src="/logo.png" alt="masil." width={100} height={40} className="h-5 w-auto" />
             </div>
-            <div className="w-5 h-5 bg-[#A8BBA3] rounded-full flex items-center justify-center ml-1">
-              <span className="text-xs text-white">✓</span>
+            {authTier === "orb" && (
+              <div className="w-5 h-5 bg-[#A8BBA3] rounded-full flex items-center justify-center ml-1">
+                <span className="text-xs text-white">✓</span>
+              </div>
+            )}
+            {authTier === "paid" && (
+              <div className="w-5 h-5 bg-[#B87C4C] rounded-full flex items-center justify-center ml-1">
+                <span className="text-xs text-white">$</span>
+              </div>
+            )}
+          </div>
+          {authTier !== "anonymous" && (
+            <div className="flex items-center gap-2">
+              {authTier === "orb" && (
+                <button
+                  onClick={() => router.push("/profile")}
+                  className="bg-[#F7F4EA] rounded-full w-10 h-10 shadow-lg flex items-center justify-center text-lg transition-colors hover:bg-[#EBD9D1]"
+                >
+                  🧑
+                </button>
+              )}
+              <button
+                onClick={handleSignOut}
+                disabled={isSigningOut}
+                className="bg-[#F7F4EA] rounded-full px-4 py-2 shadow-lg text-[#778873] text-sm transition-colors hover:bg-[#EBD9D1]"
+              >
+                {isSigningOut ? "..." : "Sign out"}
+              </button>
             </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => router.push("/profile")}
-              className="bg-[#F7F4EA] rounded-full w-10 h-10 shadow-lg flex items-center justify-center text-lg transition-colors hover:bg-[#EBD9D1]"
-            >
-              🧑
-            </button>
-            <button
-              onClick={handleSignOut}
-              disabled={isSigningOut}
-              className="bg-[#F7F4EA] rounded-full px-4 py-2 shadow-lg text-[#778873] text-sm transition-colors hover:bg-[#EBD9D1]"
-            >
-              {isSigningOut ? "..." : "Sign out"}
-            </button>
-          </div>
+          )}
         </div>
       </header>
 
@@ -229,9 +287,11 @@ export default function HomePage() {
           <PlaceDetail
             place={selectedPlace}
             reviews={selectedPlace.reviews}
-            onAddReview={handleAddReview}
+            onAddReview={authTier === "orb" ? handleAddReview : undefined}
+            onRequestAuth={handleRequestAuth}
             currentUserNullifier={selectedPlace.currentUserNullifier}
             userVotes={selectedPlace.userVotes}
+            authTier={authTier}
           />
         ) : (
           <div className="text-center py-8">
@@ -247,8 +307,8 @@ export default function HomePage() {
         )}
       </BottomSheet>
 
-      {/* Add Review Modal */}
-      {selectedPlace && (
+      {/* Add Review Modal (orb-verified only) */}
+      {selectedPlace && authTier === "orb" && (
         <AddReviewModal
           place={selectedPlace}
           isOpen={isReviewModalOpen}
@@ -256,6 +316,236 @@ export default function HomePage() {
           onSuccess={handleReviewSuccess}
         />
       )}
+
+      {/* Auth Modal */}
+      {showAuthModal && (
+        <AuthModal
+          onClose={() => setShowAuthModal(false)}
+          onSuccess={handleAuthSuccess}
+        />
+      )}
     </main>
+  );
+}
+
+// Inline auth modal component
+function AuthModal({
+  onClose,
+  onSuccess,
+}: {
+  onClose: () => void;
+  onSuccess: (tier: AccessTier) => void;
+}) {
+  const [status, setStatus] = useState<"idle" | "verifying" | "paying" | "success" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const handleVerify = async () => {
+    setStatus("verifying");
+    setErrorMsg("");
+
+    try {
+      const { MiniKit, VerificationLevel } = await import("@worldcoin/minikit-js");
+
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        setTimeout(() => reject(new Error("Verification timed out")), 30000);
+      });
+
+      const verifyPromise = MiniKit.commandsAsync.verify({
+        action: "masilauth",
+        verification_level: VerificationLevel.Orb,
+      });
+
+      const { finalPayload } = await Promise.race([verifyPromise, timeoutPromise]);
+
+      if (finalPayload.status === "error") {
+        setStatus("error");
+        setErrorMsg("Verification was cancelled or failed");
+        return;
+      }
+
+      const res = await fetch("/api/auth/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          payload: finalPayload,
+          action: "masilauth",
+        }),
+      });
+
+      if (res.ok) {
+        setStatus("success");
+        setTimeout(() => onSuccess("orb"), 300);
+      } else {
+        const data = await res.json();
+        setStatus("error");
+        setErrorMsg(data.error || "Backend verification failed");
+      }
+    } catch (e) {
+      console.error(e);
+      setStatus("error");
+      if (e instanceof Error && e.message === "Verification timed out") {
+        setErrorMsg("Verification timed out. Please try again.");
+      } else {
+        setErrorMsg("An unexpected error occurred");
+      }
+    }
+  };
+
+  const handlePay = async () => {
+    setStatus("paying");
+    setErrorMsg("");
+
+    try {
+      const { MiniKit, Tokens, tokenToDecimals } = await import("@worldcoin/minikit-js");
+
+      const recipientAddress = process.env.NEXT_PUBLIC_PAYMENT_ADDRESS;
+      if (!recipientAddress) {
+        setStatus("error");
+        setErrorMsg("Payment not configured yet");
+        return;
+      }
+
+      const reference = crypto.randomUUID().replace(/-/g, "");
+
+      const { finalPayload } = await MiniKit.commandsAsync.pay({
+        reference,
+        to: recipientAddress,
+        tokens: [
+          {
+            symbol: Tokens.USDC,
+            token_amount: tokenToDecimals(0.01, Tokens.USDC).toString(),
+          },
+        ],
+        description: "Masil - View-only access to reviews",
+      });
+
+      if (finalPayload.status === "error") {
+        setStatus("error");
+        setErrorMsg("Payment was cancelled or failed");
+        return;
+      }
+
+      // Verify payment on backend
+      const res = await fetch("/api/auth/payment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          transaction_id: (finalPayload as Record<string, unknown>).transaction_id,
+          reference,
+        }),
+      });
+
+      if (res.ok) {
+        setStatus("success");
+        setTimeout(() => onSuccess("paid"), 300);
+      } else {
+        const data = await res.json();
+        setStatus("error");
+        setErrorMsg(data.error || "Payment verification failed");
+      }
+    } catch (e) {
+      console.error(e);
+      setStatus("error");
+      setErrorMsg("Payment failed. Please try again.");
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-[70] flex items-end justify-center">
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/50" onClick={status === "idle" || status === "error" ? onClose : undefined} />
+
+      {/* Modal */}
+      <div className="relative bg-[#F7F4EA] rounded-t-3xl w-full max-w-lg p-6 pb-8 animate-slide-up">
+        {/* Close button */}
+        <button
+          onClick={onClose}
+          disabled={status === "verifying" || status === "paying"}
+          className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-[#F1F3E0] text-[#778873] hover:bg-[#D2DCB6] disabled:opacity-50"
+        >
+          ✕
+        </button>
+
+        {/* Header */}
+        <div className="text-center mb-6 pt-2">
+          <div className="w-12 h-12 bg-[#F1F3E0] rounded-full flex items-center justify-center mx-auto mb-3 border-2 border-[#D2DCB6]">
+            <span className="text-xl">🔓</span>
+          </div>
+          <h3 className="text-xl font-bold text-[#1A1A1A] mb-1">Unlock Reviews</h3>
+          <p className="text-sm text-[#778873]">Choose how you want to access reviews</p>
+        </div>
+
+        {/* Error */}
+        {status === "error" && (
+          <div className="mb-4 p-3 bg-red-50 rounded-xl border border-red-100">
+            <p className="text-red-600 text-sm text-center">{errorMsg}</p>
+          </div>
+        )}
+
+        {/* Success */}
+        {status === "success" && (
+          <div className="mb-4 p-3 bg-[#F1F3E0] rounded-xl border border-[#D2DCB6]">
+            <div className="flex items-center justify-center gap-2">
+              <div className="w-5 h-5 bg-[#A8BBA3] rounded-full flex items-center justify-center">
+                <span className="text-white text-xs">✓</span>
+              </div>
+              <p className="text-[#778873] text-sm font-medium">Unlocked!</p>
+            </div>
+          </div>
+        )}
+
+        {/* Verify Button */}
+        <button
+          onClick={handleVerify}
+          disabled={status === "verifying" || status === "paying" || status === "success"}
+          className="w-full py-4 px-6 rounded-full font-medium text-white text-base
+                     bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6]
+                     hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed
+                     transition-all duration-200 shadow-lg mb-3"
+        >
+          {status === "verifying" ? (
+            <span className="flex items-center justify-center gap-2">
+              <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              Verifying...
+            </span>
+          ) : (
+            <span className="flex items-center justify-center gap-2">
+              <span>🌐</span>
+              Verify with World ID
+            </span>
+          )}
+        </button>
+
+        <p className="text-xs text-[#778873] text-center mb-4">Full access: read, write reviews & vote</p>
+
+        {/* Divider */}
+        <div className="flex items-center gap-4 mb-4">
+          <div className="flex-1 h-px bg-[#D2DCB6]" />
+          <span className="text-sm text-[#778873]">or</span>
+          <div className="flex-1 h-px bg-[#D2DCB6]" />
+        </div>
+
+        {/* Pay Button */}
+        <button
+          onClick={handlePay}
+          disabled={status === "verifying" || status === "paying" || status === "success"}
+          className="w-full py-4 px-6 rounded-full font-medium text-[#778873] text-base
+                     bg-[#F7F4EA] border-2 border-[#D2DCB6]
+                     hover:bg-[#EBD9D1] disabled:opacity-50 disabled:cursor-not-allowed
+                     transition-all duration-200 mb-2"
+        >
+          {status === "paying" ? (
+            <span className="flex items-center justify-center gap-2">
+              <span className="w-5 h-5 border-2 border-[#778873] border-t-transparent rounded-full animate-spin" />
+              Processing...
+            </span>
+          ) : (
+            "Pay $0.01 USDC to read reviews"
+          )}
+        </button>
+
+        <p className="text-xs text-[#778873] text-center">View-only access</p>
+      </div>
+    </div>
   );
 }

@@ -26,7 +26,7 @@ const FAQ_ITEMS: FAQItem[] = [
   {
     question: "What if I don't have World ID?",
     answer:
-      "You can still access Masil by paying a small fee ($1 USDC) for view-only access. This alternative is coming soon!",
+      "You can still access Masil by paying a small fee ($0.01 USDC) for view-only access.",
   },
 ];
 
