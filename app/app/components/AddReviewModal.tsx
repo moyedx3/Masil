@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Place, CATEGORIES, CategoryKey } from "@/lib/db";
 import { haversineDistance, isWithinRange } from "@/lib/geo";
+import CategoryIcon from "./CategoryIcon";
 import GPSStatus from "./GPSStatus";
 import StarRating from "./StarRating";
 import TagSelector from "./TagSelector";
@@ -179,7 +180,7 @@ export default function AddReviewModal({
           <div>
             <h3 className="font-semibold text-[#1A1A1A]">{place.name}</h3>
             <div className="flex items-center gap-1.5 text-sm text-[#778873] mt-0.5">
-              <span>{categoryInfo.emoji}</span>
+              <CategoryIcon category={category} size={24} />
               <span>{categoryInfo.label}</span>
             </div>
           </div>

@@ -71,19 +71,17 @@ export default function Map({ places, onPlaceSelect }: MapProps) {
       const category = place.category as CategoryKey;
       const categoryInfo = CATEGORIES[category] || CATEGORIES.other;
 
-      // Create custom marker element with explicit dimensions for stable anchoring
+      // Create custom SVG marker element
       const el = document.createElement("div");
-      el.className = "emoji-marker";
+      el.className = "category-marker";
+      el.setAttribute("aria-label", `${place.name} - ${categoryInfo.label}`);
       el.style.cssText = `
         width: 36px;
         height: 36px;
-        font-size: 28px;
-        line-height: 36px;
-        text-align: center;
         cursor: pointer;
-        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));
       `;
-      el.textContent = categoryInfo.emoji;
+      el.innerHTML = `<svg width="36" height="36" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="18" r="16.25" fill="${categoryInfo.color}" stroke="white" stroke-width="2.5"/><g transform="translate(9,9) scale(${18 / 256})"><path d="${categoryInfo.iconPath}" fill="white"/></g></svg>`;
 
       // Click handler - emit place selection
       el.addEventListener("click", (e) => {
