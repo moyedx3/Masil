@@ -53,7 +53,6 @@ export default function HomePage() {
   const [places, setPlaces] = useState<Place[]>([]);
   const [status, setStatus] = useState<Status>("loading");
   const [errorMsg, setErrorMsg] = useState("");
-  const [isSigningOut, setIsSigningOut] = useState(false);
 
   // Auth tier: anonymous until checked
   const [authTier, setAuthTier] = useState<AuthTier>("anonymous");
@@ -129,22 +128,6 @@ export default function HomePage() {
       console.error("Error fetching places:", error);
       setErrorMsg("Failed to load places. Please try again.");
       setStatus("error");
-    }
-  };
-
-  const handleSignOut = async () => {
-    setIsSigningOut(true);
-    try {
-      await fetch("/api/auth/signout", { method: "POST" });
-      setAuthTier("anonymous");
-      setIsSigningOut(false);
-      // Close any open sheets
-      setIsBottomSheetOpen(false);
-      setSelectedPlace(null);
-      setSelectedPlaceId(null);
-    } catch (error) {
-      console.error("Sign out failed:", error);
-      setIsSigningOut(false);
     }
   };
 
@@ -249,7 +232,7 @@ export default function HomePage() {
 
       {/* Header overlay */}
       <header className="absolute top-0 left-0 right-0 z-10 p-4">
-        <div className="flex justify-between items-center">
+        <div className="flex items-center">
           <div className="bg-[#F7F4EA] rounded-full px-3 py-2 shadow-lg flex items-center gap-2">
             <div className="bg-[#B87C4C] rounded-lg px-2 py-1">
               <Image src="/logo.png" alt="masil." width={100} height={40} className="h-5 w-auto" />
@@ -265,25 +248,6 @@ export default function HomePage() {
               </div>
             )}
           </div>
-          {authTier !== "anonymous" && (
-            <div className="flex items-center gap-2">
-              {authTier === "orb" && (
-                <button
-                  onClick={() => router.push("/profile")}
-                  className="bg-[#F7F4EA] rounded-full w-10 h-10 shadow-lg flex items-center justify-center text-lg transition-colors hover:bg-[#EBD9D1]"
-                >
-                  🧑
-                </button>
-              )}
-              <button
-                onClick={handleSignOut}
-                disabled={isSigningOut}
-                className="bg-[#F7F4EA] rounded-full px-4 py-2 shadow-lg text-[#778873] text-sm transition-colors hover:bg-[#EBD9D1]"
-              >
-                {isSigningOut ? "..." : "Sign out"}
-              </button>
-            </div>
-          )}
         </div>
       </header>
 
@@ -298,7 +262,7 @@ export default function HomePage() {
 
       {/* Places count indicator */}
       {status === "ready" && !isBottomSheetOpen && (
-        <div className="absolute bottom-6 left-4 z-10">
+        <div className="absolute bottom-20 left-4 z-10">
           <div className="bg-[#F7F4EA] rounded-full px-4 py-2 shadow-lg text-sm text-[#778873]">
             {selectedCategory
               ? `${filteredPlaces.length} ${CATEGORIES[selectedCategory].label}${filteredPlaces.length !== 1 ? "s" : ""}`

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { User, getTrustTier } from "@/lib/db";
 import TrustBadge from "@/app/components/TrustBadge";
 
@@ -26,7 +27,9 @@ export default function ProfilePage() {
   const router = useRouter();
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSigningOut, setIsSigningOut] = useState(false);
   const [error, setError] = useState("");
+  const [isUnverified, setIsUnverified] = useState(false);
 
   useEffect(() => {
     fetchProfile();
@@ -37,7 +40,8 @@ export default function ProfilePage() {
       const res = await fetch("/api/user/profile");
       if (!res.ok) {
         if (res.status === 401) {
-          router.push("/");
+          setIsUnverified(true);
+          setIsLoading(false);
           return;
         }
         throw new Error("Failed to fetch profile");
@@ -52,10 +56,21 @@ export default function ProfilePage() {
     }
   };
 
+  const handleSignOut = async () => {
+    setIsSigningOut(true);
+    try {
+      await fetch("/api/auth/signout", { method: "POST" });
+      router.push("/home");
+    } catch (error) {
+      console.error("Sign out failed:", error);
+      setIsSigningOut(false);
+    }
+  };
+
   if (isLoading) {
     return (
-      <main className="min-h-screen bg-[#F7F4EA] p-4">
-        <div className="animate-pulse max-w-md mx-auto pt-8">
+      <main className="min-h-screen bg-[#F7F4EA] pb-20">
+        <div className="animate-pulse max-w-md mx-auto pt-12 px-4">
           <div className="h-20 w-20 bg-[#D2DCB6] rounded-full mx-auto mb-4" />
           <div className="h-6 bg-[#D2DCB6] rounded w-1/2 mx-auto mb-2" />
           <div className="h-4 bg-[#D2DCB6] rounded w-1/3 mx-auto mb-8" />
@@ -69,17 +84,50 @@ export default function ProfilePage() {
     );
   }
 
+  // Unverified / anonymous user state
+  if (isUnverified) {
+    return (
+      <main className="min-h-screen bg-[#F7F4EA] pb-20">
+        <header className="p-4 border-b border-[#D2DCB6]">
+          <h1 className="text-lg font-semibold text-[#1A1A1A] text-center">
+            Profile
+          </h1>
+        </header>
+        <div className="max-w-sm mx-auto px-4 pt-16 text-center">
+          <div className="w-20 h-20 bg-[#F1F3E0] rounded-full mx-auto mb-4 flex items-center justify-center">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12ZM12 14C9.33 14 4 15.34 4 18V20H20V18C20 15.34 14.67 14 12 14Z"
+                fill="#778873"
+              />
+            </svg>
+          </div>
+          <h2 className="text-xl font-bold text-[#1A1A1A] mb-2">
+            Verify to See Your Profile
+          </h2>
+          <p className="text-sm text-[#778873] mb-6">
+            Verify with World ID to post reviews, build your trust score, and
+            track your contributions.
+          </p>
+          <Link
+            href="/home"
+            className="inline-block bg-[#B87C4C] text-white px-6 py-3 rounded-full font-medium transition-colors hover:opacity-90"
+          >
+            Go to Map
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
   if (error || !profile) {
     return (
-      <main className="min-h-screen bg-[#F7F4EA] flex flex-col items-center justify-center p-4">
+      <main className="min-h-screen bg-[#F7F4EA] flex flex-col items-center justify-center p-4 pb-20">
         <div className="text-4xl mb-3">😕</div>
         <p className="text-[#778873] mb-4">{error || "Profile not found"}</p>
-        <button
-          onClick={() => router.push("/home")}
-          className="text-[#B87C4C] font-medium"
-        >
+        <Link href="/home" className="text-[#B87C4C] font-medium">
           Back to Map
-        </button>
+        </Link>
       </main>
     );
   }
@@ -87,16 +135,17 @@ export default function ProfilePage() {
   const tier = getTrustTier(profile.user.trust_score);
 
   return (
-    <main className="min-h-screen bg-[#F7F4EA]">
+    <main className="min-h-screen bg-[#F7F4EA] pb-20">
       {/* Header */}
-      <header className="p-4 flex items-center gap-3 border-b border-[#D2DCB6]">
-        <button
-          onClick={() => router.push("/home")}
-          className="text-[#778873] text-lg"
-        >
-          ←
-        </button>
+      <header className="p-4 flex items-center justify-between border-b border-[#D2DCB6]">
         <h1 className="text-lg font-semibold text-[#1A1A1A]">My Profile</h1>
+        <button
+          onClick={handleSignOut}
+          disabled={isSigningOut}
+          className="text-[#778873] text-sm px-3 py-1.5 rounded-full border border-[#D2DCB6] hover:bg-[#EBD9D1] transition-colors disabled:opacity-50"
+        >
+          {isSigningOut ? "..." : "Sign out"}
+        </button>
       </header>
 
       <div className="max-w-md mx-auto p-4">
@@ -161,12 +210,12 @@ export default function ProfilePage() {
             <div className="text-center py-8">
               <div className="text-4xl mb-3">📝</div>
               <p className="text-[#778873] mb-2">No reviews yet</p>
-              <button
-                onClick={() => router.push("/home")}
+              <Link
+                href="/home"
                 className="text-[#B87C4C] font-medium text-sm"
               >
                 Go explore places
-              </button>
+              </Link>
             </div>
           ) : (
             <div className="space-y-3">
