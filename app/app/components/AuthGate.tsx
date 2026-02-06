@@ -109,17 +109,8 @@ export default function AuthGate({ onVerifySuccess }: AuthGateProps) {
       <div className="w-full max-w-sm mb-6 p-6 bg-[#F1F3E0] rounded-2xl border border-[#D2DCB6]">
         <div className="flex items-center justify-center gap-3 mb-3">
           {/* World ID Logo (simplified) */}
-          <div className="w-10 h-10 bg-black rounded-full flex items-center justify-center">
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <circle cx="12" cy="12" r="10" stroke="white" strokeWidth="2" />
-              <circle cx="12" cy="12" r="4" fill="white" />
-            </svg>
+          <div className="w-10 h-10 flex items-center justify-center">
+            <Image src="/icons/globe.svg" alt="Globe" width={32} height={32} />
           </div>
           <span className="text-lg font-semibold text-[#1A1A1A]">World ID</span>
         </div>
