@@ -14,16 +14,18 @@ interface VerifyRequest {
 export async function POST(req: NextRequest) {
   try {
     const body: VerifyRequest = await req.json();
-    const { payload, action } = body;
+    const { payload } = body;
 
     // Validate required fields
-    if (!payload || !action) {
+    if (!payload) {
       return NextResponse.json(
         { verified: false, error: "Missing required fields" },
         { status: 400 }
       );
     }
 
+    // Hardcode action server-side — never trust client-provided action
+    const action = "masilauth";
     const app_id = process.env.APP_ID as `app_${string}`;
 
     if (!app_id) {
