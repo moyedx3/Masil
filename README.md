@@ -4,13 +4,9 @@
 
 > "마실" is a traditional Korean word meaning "a casual stroll to a neighbor's house" - wandering your neighborhood to connect with your community.
 
-<p align="center">
-  <img src="docs/frotend/logo/no_background.png" alt="Masil Logo" width="200" />
-</p>
+<img width="300" alt="showcase_1" src="https://github.com/user-attachments/assets/5b28aa15-c49a-4dab-b2f0-b565158b8d92" /> <img width="300" alt="showcase_2" src="https://github.com/user-attachments/assets/60dfb4ad-92c0-4712-9d3a-73410a777a37" /> <img width="300" alt="showcase_3" src="https://github.com/user-attachments/assets/65cdcc31-c221-48f8-ba23-aac5eeeaf8d9" />
 
-<p align="center">
-  <img src="docs/frotend/screenshot/screenshot22.jpg" alt="Masil Screenshot" width="300" />
-</p>
+
 
 ## The Problem
 
