@@ -1,11 +1,14 @@
 import { createClient } from "@supabase/supabase-js";
 
 // Types for our database
+export type AccessTier = "orb" | "paid";
+
 export interface User {
   nullifier_hash: string;
   wallet_address: string | null;
   trust_score: number;
   review_count: number;
+  access_tier: AccessTier;
   created_at: string;
   updated_at: string;
 }

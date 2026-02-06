@@ -11,14 +11,8 @@ export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  // Check authentication
+  // Auth is optional — anonymous users can view reviews (blurred on client)
   const auth = req.cookies.get("auth");
-  if (!auth?.value) {
-    return NextResponse.json(
-      { error: "Authentication required" },
-      { status: 401 }
-    );
-  }
 
   const { id } = await params;
 
@@ -63,7 +57,7 @@ export async function GET(
 
     // Fetch user's votes for these reviews
     // Auth cookie stores the nullifier_hash as a plain string
-    const currentUserNullifier = auth.value || null;
+    const currentUserNullifier = auth?.value || null;
     const reviewIds = (reviews || []).map((r: Review) => r.id);
     const userVotes = currentUserNullifier
       ? await getUserVotes(currentUserNullifier, reviewIds)

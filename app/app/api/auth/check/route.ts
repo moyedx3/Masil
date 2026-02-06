@@ -21,6 +21,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({
       authenticated: true,
+      access_tier: user.access_tier || "orb",
       user: {
         nullifier_hash: user.nullifier_hash,
         trust_score: user.trust_score,

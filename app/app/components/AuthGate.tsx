@@ -190,7 +190,7 @@ export default function AuthGate({ onVerifySuccess }: AuthGateProps) {
                    hover:bg-[#EBD9D1] disabled:opacity-50 disabled:cursor-not-allowed
                    transition-all duration-200 mb-8"
       >
-        Pay $1 for view-only access
+        Pay $0.01 for view-only access
       </button>
 
       {/* FAQ Section */}
